@@ -1,0 +1,2 @@
+# 统一 LF（呼应 docs/coding.md §5.6 与 templates/gitattributes.example）
+* text=auto eol=lf

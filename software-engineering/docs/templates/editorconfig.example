@@ -1,0 +1,22 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# C# / C++（4 空格）
+[*.{cs,csx,vb}]
+indent_size = 4
+
+[*.cpp, *.cc, *.h, *.hpp]
+indent_size = 4
+
+# Dart / TS / JS / JSON / YAML / Markdown（2 空格）
+[*.{dart,ts,tsx,js,jsx,json,yml,yaml,md}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

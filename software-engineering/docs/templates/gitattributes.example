@@ -1,0 +1,17 @@
+# 仓库内统一 LF；如需 Windows 桌面 CRLF，可对该类文件覆盖 eol=crlf
+* text=auto eol=lf
+
+*.cs   text eol=lf
+*.dart text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.cpp  text eol=lf
+*.h    text eol=lf
+*.md   text eol=lf
+
+# 二进制产物/资源不转换
+*.exe  binary
+*.dll  binary
+*.png  binary
+*.ico  binary
+*.pdf  binary
