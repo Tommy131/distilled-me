@@ -48,6 +48,16 @@ metadata:
 | 提交/发布前收尾评审（Definition of Done） | `docs/quality-gate.md` |
 | 代码评审扫红旗（反模式） | `docs/antipatterns.md`（§17） |
 | AI 生成/修改代码的协作边界 | `docs/ai-collab.md`（§18） |
+| 校验文档落盘 / i18n 键集 | 运行 `scripts/check_docs_layout.py`、`scripts/check_i18n.py`（见下） |
+
+## 捆绑脚本（拷贝到目标仓库 `scripts/` 或直接指向本 skill 路径）
+
+| 脚本 | 作用 | 示例 |
+|------|------|------|
+| `scripts/check_docs_layout.py` | 文档落盘铁律：根目录/源码树不得散落生成文档 | `python scripts/check_docs_layout.py .` |
+| `scripts/check_i18n.py` | 多语言键集一致、占位符对齐、无空译文 | `python scripts/check_i18n.py path/to/locales --baseline en` |
+
+Agent 在做脚手架、收尾门禁或修 i18n/文档结构时 SHOULD 运行相关脚本；失败则先修再继续。触发评测样本见 `evals/trigger-eval.json`（优化 description 时用）。
 
 ## 十二核心原则
 

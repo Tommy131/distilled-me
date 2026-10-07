@@ -1,6 +1,6 @@
 # 标准映射与文档规范
 
-> Engineering Playbook 子文档（保留原编号 §2、§12）。适用场景：写需求/设计文档（FR/NFR、架构视图、SDD、ADR）、决定文档落盘位置。
+> software-engineering 子文档（保留原编号 §2、§12）。适用场景：写需求/设计文档（FR/NFR、架构视图、SDD、ADR）、决定文档落盘位置。
 
 ## 2. 国际标准映射（Standards Alignment）
 

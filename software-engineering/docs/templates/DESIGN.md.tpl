@@ -6,7 +6,7 @@
 ## 1. 定位与痛点
 - 一句话说清解决什么问题、给谁用。
 
-## 2. 采纳的原则（声明后必须贯穿，见 engineering-playbook 十二原则）
+## 2. 采纳的原则（声明后必须贯穿，见 software-engineering 十二原则）
 - [ ] 声明式优先 / 关注点分离 / 依赖单向 / 模块化可插拔
 - [ ] 幂等可重入 / 可复现 / 零依赖落地 / 失败隔离
 - [ ] 可观测 / 安全优先 / 最小权限 / 单一事实来源（SSOT）
@@ -39,7 +39,7 @@
 
 ## 6. 数据模型
 - 核心实体 / 状态机 / 值对象，带 `schemaVersion`。
-- 演进与迁移策略：expand/contract、可回滚（见 engineering-playbook §6.5）。
+- 演进与迁移策略：expand/contract、可回滚（见 software-engineering `docs/data-i18n.md` §6.5）。
 
 ## 7. 引擎 / 接口 / UI 设计
 - 引擎：…

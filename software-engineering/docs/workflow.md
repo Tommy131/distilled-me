@@ -1,6 +1,6 @@
 # 版本、提交、分支与发布
 
-> Engineering Playbook 子文档（保留原编号 §11）。适用场景：提交、分支、版本号、CHANGELOG、发布。
+> software-engineering 子文档（保留原编号 §11）。适用场景：提交、分支、版本号、CHANGELOG、发布。
 
 ## 11. 版本、提交、分支与变更管理（ISO/IEC 14764）
 

@@ -1,6 +1,6 @@
 # 编码规范
 
-> Engineering Playbook 子文档（保留原编号 §5）。适用场景：写代码、代码评审（SOLID/命名/错误/并发/平台）。
+> software-engineering 子文档（保留原编号 §5）。适用场景：写代码、代码评审（SOLID/命名/错误/并发/平台）。
 
 ## 5. 编码规范（Coding Conventions）
 

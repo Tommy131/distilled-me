@@ -1,0 +1,66 @@
+[
+  {
+    "query": "帮我从一个空仓库搭跨平台项目脚手架，要有 DESIGN/ADR、模块注册和 CI 门禁",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this PR for dependency direction, idempotent writes, and whether secrets leaked into config",
+    "should_trigger": true
+  },
+  {
+    "query": "Write an ADR for switching our API errors to a stable code + trace_id envelope",
+    "should_trigger": true
+  },
+  {
+    "query": "我们要把 schemaVersion 从 2 升到 3，请按 expand/contract 写迁移策略",
+    "should_trigger": true
+  },
+  {
+    "query": "Add i18n key parity checks to CI and fix missing zh placeholders",
+    "should_trigger": true
+  },
+  {
+    "query": "AI 改完代码准备提交了，对照质量门禁帮我收尾，尤其是文档落盘和测试",
+    "should_trigger": true
+  },
+  {
+    "query": "Design the REST pagination and Idempotency-Key behavior for POST /orders",
+    "should_trigger": true
+  },
+  {
+    "query": "扫一下这次 diff 有没有反模式：N+1、领域层读时钟、静默 catch",
+    "should_trigger": true
+  },
+  {
+    "query": "ok so my boss wants a Q4 sales pivot table from the xlsx in Downloads",
+    "should_trigger": false
+  },
+  {
+    "query": "Make this landing page look more distinctive with better typography and motion",
+    "should_trigger": false
+  },
+  {
+    "query": "Extract tables from this PDF and merge with another PDF",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a fibonacci function in Python",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix the WCAG focus ring and axe violations on the settings dialog",
+    "should_trigger": false
+  },
+  {
+    "query": "Draft a polite status update email to leadership about the outage",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a slide deck pitching our Q2 roadmap",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I change the VS Code / Cursor font size and tab width?",
+    "should_trigger": false
+  }
+]
