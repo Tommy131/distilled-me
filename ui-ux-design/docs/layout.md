@@ -1,37 +1,41 @@
-# Layout System — Responsive & Adaptive Design
+# Layout — Responsive & Adaptive
 
-> Apple Human Guidelines / Fluent Design System layout principles: container-based responsive design, grid system, breakpoint-driven layouts, and a strict minimum-width requirement.
+> Container-based layout, shared breakpoints, mobile-usable floors. Trim the breakpoint set in project docs when the product is mobile-only or embedded.
 
-## Breakpoints
+## Breakpoints (defaults)
 
-| Breakpoint | Device | Minimum | Notes |
-|------------|--------|---------|-------|
-| `320px` | Narrow mobile | ✅ Required | Max horizontal padding ≤ `--space-4` (12px) |
-| `480px` | Standard mobile | ✅ Required | Small screens |
-| `768px` | Tablet | ✅ Required | Medium screens |
-| `1000px` | Desktop | ✅ Required | Desktop minimum — all components must work at ≥1000px |
-| `1280px` | Large desktop | Optional | Max-width container |
-| `1440px` | Large display | Optional | No max-width |
+| Breakpoint | Role | Required by default |
+|------------|------|---------------------|
+| `320px` | Narrow mobile floor | Yes |
+| `480px` | Phone | Yes |
+| `768px` | Tablet | Yes |
+| `1024px` | Desktop | Yes (default desktop target) |
+| `1280px` | Large desktop / content max | Optional |
+| `1440px` | Wide display | Optional |
 
-**Rule**: Every component must be designed for ≥320px width and ≥1000px width. Below 320px is acceptable but not required. Below 1000px desktop components may degrade but must be usable.
+**Rules:**
 
-## Container System
+- Design so primary flows work at **320px** width without horizontal scrolling.
+- Desktop layouts SHOULD be verified at **≥1024px**.
+- Mobile-only apps MAY omit 1024+ verification — declare in design docs.
+- Embedded widgets MAY use container queries instead of viewport breakpoints.
 
-### Max-width Container
+## Container
 
 ```css
-/* Container — center content with max-width */
 .container {
   width: 100%;
-  max-width: 1440px;
+  max-width: 80rem; /* ~1280px */
   margin-inline: auto;
   padding-inline: var(--space-5);
 }
+
 @media (min-width: 768px) {
   .container {
     padding-inline: var(--space-6);
   }
 }
+
 @media (min-width: 1280px) {
   .container {
     padding-inline: var(--space-7);
@@ -39,20 +43,21 @@
 }
 ```
 
-### Page Padding
+## Page padding
 
 ```css
-/* Page padding — responsive */
 .page {
   padding-block: var(--space-5);
   padding-inline: var(--space-4);
 }
+
 @media (min-width: 768px) {
   .page {
     padding-block: var(--space-6);
     padding-inline: var(--space-5);
   }
 }
+
 @media (min-width: 1280px) {
   .page {
     padding-block: var(--space-7);
@@ -61,239 +66,113 @@
 }
 ```
 
-## Grid System
-
-### CSS Grid
+## CSS Grid
 
 ```css
-/* Responsive grid */
 .grid {
   display: grid;
   gap: var(--space-4);
-}
-
-/* Mobile: 1 column */
-.grid--1col {
   grid-template-columns: 1fr;
 }
+
 @media (min-width: 480px) {
-  .grid--2col {
+  .grid--2 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 @media (min-width: 768px) {
-  .grid--3col {
+  .grid--3 {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-@media (min-width: 1000px) {
-  .grid--4col {
+
+@media (min-width: 1024px) {
+  .grid--4 {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-@media (min-width: 1280px) {
-  .grid--5col {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-/* Custom spans */
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-@media (min-width: 768px) {
-  .col-span-2 {
-    grid-column: span 2 / span 2;
-  }
-}
 ```
 
-### CSS Flexbox
+## Flexbox
 
 ```css
-/* Flexbox layout */
 .flex {
   display: flex;
+  gap: var(--space-4);
 }
 
-.flex--row {
-  flex-direction: row;
-}
-.flex--col {
-  flex-direction: column;
-}
-@media (min-width: 768px) {
-  .flex--row {
-    flex-direction: row;
-  }
-  .flex--col {
-    flex-direction: column;
-  }
-}
-
-/* Alignment */
-.flex--center {
-  align-items: center;
-}
-.flex--between {
-  justify-content: space-between;
-}
-.flex--end {
-  justify-content: flex-end;
-}
-
-/* Wrap */
 .flex--wrap {
   flex-wrap: wrap;
 }
-.flex--nowrap {
-  flex-wrap: nowrap;
+
+.flex__item {
+  min-width: 0; /* prevent overflow */
 }
 ```
 
-## Flexbox Layout Patterns
+Patterns: sticky footer (`flex` column + `flex: 1` main), equal-height columns (`flex: 1 1 0`), centered shells.
 
-### Centered Content
+## Principles
 
-```css
-/* Centered content */
-.content-centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-```
-
-### Sticky Footer
+1. **Content first** — base styles fit small screens; enhance upward.
+2. **No horizontal scroll** on primary mobile flows.
+3. **Test real breakpoints** — 320 / 480 / 768 / 1024 / 1280 as applicable.
+4. **`clamp()` for fluid type/spacing** when it stays readable.
+5. **Max content width** — do not stretch prose to full ultrawide.
+6. Prefer **container queries** for component-level adaptation:
 
 ```css
-/* Sticky footer */
-.layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-.layout__content {
-  flex-grow: 1;
-}
-.layout__footer {
-  flex-shrink: 0;
-}
-```
-
-### Equal-height Columns
-
-```css
-/* Equal-height columns — flex */
-.columns {
-  display: flex;
-}
-.columns__col {
-  flex: 1 1 0;
-  min-width: 0;
-}
-@media (min-width: 768px) {
-  .columns {
-    flex-direction: row;
-  }
-}
-```
-
-## Flexbox Principles
-
-1. **Use flex for layout** — never for alignment alone (CSS align-self/align-items for alignment).
-2. **No flex-basis tricks** — use flex: 1 1 0 or flex: 1 1 0% for equal distribution.
-3. **Min-width: 0 on flex children** — prevents flex child from being wider than its content.
-4. **Wrap on small screens** — use flex-wrap: wrap for horizontal layouts that stack on narrow screens.
-
-## CSS Grid Principles
-
-1. **Grid for complex layouts** — multi-column, multi-row, spanning.
-2. **Auto-fill vs auto-fit** — use `repeat()` (repeat-fill) for fixed columns, `auto-fill` for flexible columns.
-3. **Don't nest grids** — if you need nested grids, you're designing a component, not a layout.
-4. **Grid gaps** — always use `gap`, never margin for inter-grid spacing.
-
-## Responsive Design Principles
-
-1. **Content-first** — design for the smallest screen first, then expand. Never scale up.
-2. **Progressive enhancement** — mobile is the base; desktop features are progressive enhancements.
-3. **No shrinking below 320px** — design for a minimum content width of 320px.
-4. **No horizontal scrolling on mobile** — content must fit within the viewport.
-5. **Test at real breakpoints** — 320px, 480px, 768px, 1000px, 1280px. Use Chrome DevTools Device Emulation.
-6. **No CSS media queries below 320px** — no `@media (max-width: 280px)` or similar.
-7. **Use `clamp()` for fluid values** — `padding: clamp(var(--space-4), 4vw, var(--space-6))`.
-8. **Content width constraint** — never stretch content to fill the viewport. Always max-width.
-
-## Fluid Typography
-
-```css
-/* Fluid typography — scales between mobile and desktop */
-.fluid-text {
-  font-size: clamp(
-    var(--font-body),     /* minimum — mobile */
-    calc(16px + 2vw),     /* variable — scales with viewport */
-    var(--font-heading)    /* maximum — desktop */
-  );
-}
-```
-
-## Responsive Images
-
-```css
-/* Responsive images */
-img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
+.card-panel {
+  container-type: inline-size;
 }
 
-/* Cover for hero images */
-.hero-image {
-  width: 100%;
-  height: 320px;
-  object-fit: cover;
-}
-@media (min-width: 768px) {
-  .hero-image {
-    height: 480px;
-  }
-}
-
-/* Responsive image sources */
-img {
-  object-fit: contain;
-}
-@media (min-width: 768px) {
-  img {
-    object-fit: contain;
-  }
-}
-```
-
-## Responsive Typography Scales
-
-| Breakpoint | H1 | H2 | H3 | Body | Label | Caption |
-|------------|---|---|---|---|---|---|
-| 320px | 32px | 24px | 20px | 14px | 12px | 10px |
-| 480px | 40px | 28px | 24px | 16px | 14px | 12px |
-| 768px | 48px | 32px | 28px | 16px | 14px | 12px |
-| 1000px | 64px | 40px | 32px | 16px | 14px | 12px |
-| 1280px | 72px | 48px | 36px | 18px | 14px | 12px |
-
-Use `clamp()` for fluid scaling between breakpoints, not `@media` queries for every step.
-
-## Container Queries
-
-```css
-/* Container query — component adapts to container size */
 @container (min-width: 480px) {
-  .component {
+  .card-panel__body {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
   }
 }
 ```
 
-Container queries are preferred over media queries for component-level responsive behavior, as they respond to actual container size, not viewport size.
+## Fluid type (example)
+
+```css
+.fluid-heading {
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-bold);
+  font-size: clamp(var(--font-size-heading), 2vw + 1rem, 2.5rem);
+  line-height: var(--line-height-heading);
+}
+```
+
+Do not pass typography tokens that are not lengths into `clamp()` incorrectly — use size tokens that resolve to `rem`/`px`.
+
+## Responsive type scale (defaults)
+
+| Breakpoint | H1 | H2 | H3 | Body | Label | Caption |
+|------------|----|----|----|------|-------|---------|
+| 320px | 32px | 24px | 20px | 16px | 14px | 12px |
+| 768px | 40px | 28px | 24px | 16px | 14px | 12px |
+| 1024px | 48px | 32px | 28px | 16px | 14px | 12px |
+| 1280px | 56px | 36px | 28px | 18px | 14px | 12px |
+
+Body text SHOULD stay ≥16px for readable web UI unless a constrained native shell documents otherwise.
+
+## Images
+
+```css
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.hero-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+```
+
+Reserve space with `aspect-ratio` or width/height attributes to limit CLS.

@@ -1,0 +1,165 @@
+/**
+ * Design tokens — copy into the app global stylesheet or CSS module entry.
+ * Components consume semantic tokens only; primitives stay in :root theme blocks.
+ */
+
+:root {
+  /* —— Primitive palette (light defaults; dark overrides below) —— */
+  --palette-primary-800: #0f3a7a;
+  --palette-primary-900: #14479f;
+  --palette-primary-100: #426495;
+
+  --palette-neutral-10: #f7f7f7;
+  --palette-neutral-50: #ffffff;
+  --palette-neutral-100: #ffffff;
+  --palette-neutral-400: #c6c6c6;
+  --palette-neutral-500: #8a8a8a;
+  --palette-neutral-600: #6b6b6b;
+  --palette-neutral-700: #4a4a4a;
+  --palette-neutral-800: #2e2e2e;
+  --palette-neutral-900: #1d1d1d;
+
+  --palette-destructive-800: #5a0a0a;
+  --palette-destructive-900: #6d0707;
+  --palette-success-900: #0d5c2e;
+
+  /* —— Semantic color —— */
+  --color-text-primary: var(--palette-neutral-900);
+  --color-text-secondary: var(--palette-neutral-700);
+  --color-text-tertiary: var(--palette-neutral-500);
+  --color-text-destructive: var(--palette-destructive-900);
+  --color-text-success: var(--palette-success-900);
+  --color-text-on-primary: #ffffff;
+
+  --color-bg-surface: var(--palette-neutral-100);
+  --color-bg-elevation-1: var(--palette-neutral-50);
+  --color-bg-elevation-2: var(--palette-neutral-10);
+  --color-bg-overlay: rgb(29 29 29 / 0.56);
+  --color-bg-primary: var(--palette-primary-900);
+  --color-bg-primary-hover: var(--palette-primary-800);
+  --color-bg-destructive: var(--palette-destructive-900);
+
+  --color-border-subtle: var(--palette-neutral-400);
+  --color-border-default: var(--palette-neutral-600);
+  --color-border-strong: var(--palette-neutral-800);
+
+  --color-focus-ring: var(--palette-primary-900);
+  --color-focus-ring-outer: rgb(20 71 159 / 0.35);
+
+  /* —— Spacing (4px grid; space-1 is a 2px hairline exception) —— */
+  --space-0: 0;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  /* —— Typography —— */
+  --font-family-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --font-size-display: 2.25rem;   /* 36px mobile floor; scale up in layout */
+  --font-size-heading: 1.5rem;    /* 24px */
+  --font-size-body: 1rem;         /* 16px */
+  --font-size-label: 0.875rem;    /* 14px */
+  --font-size-caption: 0.75rem;   /* 12px */
+
+  --line-height-display: 1.2;
+  --line-height-heading: 1.3;
+  --line-height-body: 1.5;
+  --line-height-label: 1.4;
+  --line-height-caption: 1.4;
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* —— Motion —— */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-deliberate: 450ms;
+
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --easing-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --easing-entrance: cubic-bezier(0, 0, 0, 1);
+  --easing-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* —— Radius / elevation —— */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-elevation-1: 0 1px 2px rgb(0 0 0 / 0.08);
+  --shadow-elevation-2: 0 4px 12px rgb(0 0 0 / 0.12);
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"],
+[data-theme="dark"] {
+  --palette-neutral-10: #2a2a2a;
+  --palette-neutral-50: #4b4b4b;
+  --palette-neutral-100: #383838;
+  --palette-neutral-400: #6b6b6b;
+  --palette-neutral-500: #9a9a9a;
+  --palette-neutral-600: #b0b0b0;
+  --palette-neutral-700: #c8c8c8;
+  --palette-neutral-800: #e0e0e0;
+  --palette-neutral-900: #f2f2f2;
+
+  --palette-primary-900: #6b8fc9;
+  --palette-primary-800: #426495;
+  --palette-destructive-900: #e07070;
+  --palette-success-900: #5dcaa0;
+
+  --color-text-primary: var(--palette-neutral-900);
+  --color-text-secondary: var(--palette-neutral-700);
+  --color-text-tertiary: var(--palette-neutral-500);
+  --color-text-on-primary: #0f172a;
+
+  --color-bg-surface: #1a1a1a;
+  --color-bg-elevation-1: var(--palette-neutral-100);
+  --color-bg-elevation-2: var(--palette-neutral-10);
+  --color-bg-overlay: rgb(0 0 0 / 0.64);
+  --color-bg-primary: var(--palette-primary-800);
+  --color-bg-primary-hover: var(--palette-primary-900);
+
+  --color-border-subtle: var(--palette-neutral-400);
+  --color-border-default: var(--palette-neutral-500);
+  --color-border-strong: var(--palette-neutral-700);
+
+  --color-focus-ring: var(--palette-primary-900);
+  --color-focus-ring-outer: rgb(107 143 201 / 0.45);
+
+  --shadow-elevation-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-elevation-2: 0 4px 12px rgb(0 0 0 / 0.5);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+  }
+}
+
+/* Focus ring utility — prefer :focus-visible in components */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

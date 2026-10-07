@@ -1,121 +1,109 @@
-# Accessibility & Screen Reader Compliance (WCAG 2025)
+# Accessibility (WCAG 2.2 AA)
 
-> Apple Human Guidelines / Microsoft Accessibility Guidelines / WCAG 2025 principles: accessible by default, keyboard-first, screen reader compatible.
+> Target: **WCAG 2.2 Level AA**. Prefer native HTML semantics; add ARIA only when HTML is insufficient. Test with keyboard and a real screen reader (VoiceOver on macOS/iOS, Narrator or NVDA on Windows, TalkBack on Android).
 
-## WCAG 2025 Core Criteria
+## Core checklist
 
-| Criterion | Requirement | Implementation |
-|-----------|-------------|----------------|
-| Logical tab order | All focusable elements in logical tab order | Natural DOM order; `tabindex` only to fix order |
-| Visible focus | Focus ring on all focusable elements | Outline or box-shadow on `:focus-visible` |
-| Keyboard action | All actions keyboard accessible | `keydown` handler on every interactive element |
-| ARIA roles | Correct use of ARIA roles | `role` + `aria-*` only when HTML element insufficient |
-| Language | `lang` attribute on all content | `<html lang="en">` or `<meta name="description" lang="en">` |
-| Alt images | All images have `alt`; decorative images `alt=""` | `alt` describes content; `alt=""` for decorative |
-| Headings | One `<h1>` per page, proper hierarchy | `<h1>` → `<h2>` → `<h3>` → `<h4>` |
-| Screen reader | All content announced | ARIA live regions for dynamic content |
+| Area | Requirement | Implementation notes |
+|------|-------------|----------------------|
+| Keyboard | All actions operable by keyboard | Native controls; custom widgets need key handlers + `tabindex="0"` |
+| Focus visible | Clear focus indicator | `:focus-visible` outline / ring using `--color-focus-ring` |
+| Focus order | Matches reading order | DOM order; avoid positive `tabindex` |
+| Name / Role / Value | Correct accessible name | `<label>`, `aria-label`, or `aria-labelledby` |
+| Contrast | Text 4.5:1 (3:1 large); UI 3:1 | Check against tokens in both themes |
+| Images | Informative `alt`; decorative `alt=""` | Do not put critical text only in images |
+| Headings | One `<h1>`; no level skips without reason | Structure content, do not style with random heading tags |
+| Language | `<html lang="…">` | Set `lang` on passages in another language |
+| Target size (2.2) | Meet AA target size / spacing | Prefer ≥24×24 CSS px with adequate spacing; 44×44 where touch-primary |
+| Status messages (2.2) | Updates announced without focus move | `role="status"` / `aria-live="polite"` or `role="alert"` |
+| Consistent help / auth (2.2) | Help and auth steps stay consistent | Same relative order across pages where required |
 
-## Focus Management
+Official reference: [WCAG 2.2](https://www.w3.org/TR/WCAG22/).
 
-### Focus Style
+## Focus
 
 ```css
-/* Focus ring — visible on keyboard navigation, hidden on mouse */
 *:focus-visible {
-  outline: 2px solid var(--color-primary-900);
-  outline-offset: 4px;
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
-/* For buttons */
 button:focus-visible {
-  box-shadow: 0 0 0 2px var(--color-primary-900),
-              0 0 0 6px rgba(14479F, 0.3);
   outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-bg-surface),
+    0 0 0 4px var(--color-focus-ring),
+    0 0 0 6px var(--color-focus-ring-outer);
 }
 ```
 
-### Tab Order
+- Do not remove outlines without a visible replacement.
+- Modals: move focus inside on open; trap focus while open; restore focus to the trigger on close; close on Escape.
+
+## Skip link
 
 ```html
-<!-- Default: natural DOM order (recommended) -->
-<nav>
-  <a href="/home">Home</a>
-  <a href="/about">About</a>
-</nav>
-
-<!-- Fix order with tabindex (rarely needed) -->
-<input type="text" tabindex="1">
-<select tabindex="2">
-  <option value="option1">Option 1</option>
-</select>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+…
+<main id="main-content">…</main>
 ```
 
-### Focus Traps (Skip Links)
+## ARIA essentials
+
+Use ARIA to **fill gaps**, not to re-implement buttons/links.
+
+| Attribute | Valid values / notes |
+|-----------|----------------------|
+| `aria-expanded` | `true` / `false` |
+| `aria-selected` | `true` / `false` |
+| `aria-checked` | `true` / `false` / `mixed` |
+| `aria-disabled` | `true` / `false` (prefer native `disabled` when possible) |
+| `aria-hidden` | `true` / `false` — hides from accessibility tree; do not hide focusable content |
+| `aria-busy` | `true` / `false` only |
+| `aria-live` | `off` / `polite` / `assertive` |
+| `aria-valuemin` / `aria-valuemax` / `aria-valuenow` | For `role="progressbar"` / slider |
+| `aria-label` / `aria-labelledby` / `aria-describedby` | Accessible name / description |
+
+### Live regions
 
 ```html
-<nav aria-label="Primary">
-  <a href="#main-content">Skip to main content</a>
-</nav>
-<main id="main-content">
-  <!-- Main content -->
-</main>
+<div role="status" aria-live="polite" aria-atomic="true" id="form-status"></div>
 ```
 
-## ARIA Attributes
-
-### Roles
-
-| Role | Description | Usage |
-|------|-----------|--------|
-| `role="alert"` | Alerts user of important event | Use sparingly |
-| `role="dialog"` | Modal dialog | Requires focus management |
-| `role="progressbar"` | Progress indicator | Requires `aria-valuemin`/`aria-valuemax`/`aria-valuen` |
-| `role="status"` | Status updates | Use `aria-live="polite"` or `aria-live="assertive"` |
-| `role="tablist"` | Tab navigation | Requires keyboard arrow navigation |
-| `role="tab"` | Individual tab | Requires `aria-selected` |
-| `role="tabpanel"` | Tab panel content | Requires `aria-labelledby` |
-| `role="tooltip"` | Tooltip | Requires `aria-describedby` |
-| `role="search"` | Search form | Requires `aria-label` |
-| `role="navigation"` | Navigation region | Requires `aria-label` |
-
-### ARIA States
-
-| State | Description | Usage |
-|------|-----------|--------|
-| `aria-expanded` | Expandable content | `true`/`false` toggle |
-| `aria-selected` | Selected item | `true`/`false` toggle |
-| `aria-checked` | Checkbox state | `true`/`false` toggle |
-| `aria-disabled` | Disabled state | `true`/`false` toggle |
-| `aria-hidden` | Hidden element | `true`/`false` toggle (prevents DOM removal) |
-| `aria-busy="eased"` | Loading state | `eased`/`immediate` |
-| `aria-live` | Live region | `polite`/`assertive`/`off` |
-| `aria-atomic` | Atomic element | `true`/`false` |
-| `aria-haspopup` | Has popup | `true`/`false`/`menu`/`dialog` |
-| `aria-label` | Accessible label | Descriptive text |
-| `aria-labelledby` | Accessible label from element | ID reference |
-| `aria-describedby` | Accessible description from element | ID reference |
-
-### Live Regions
-
-```html
-<!-- Announced to screen reader -->
-<div aria-live="polite" aria-label="Status">
-  <span id="status-text">Saving...</span>
-</div>
-
-<script>
-function updateStatus(message) {
-  document.getElementById('status-text').textContent = message;
+```js
+function announce(message, { assertive = false } = {}) {
+  let el = document.getElementById("sr-announcer");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "sr-announcer";
+    el.className = "visually-hidden";
+    el.setAttribute("aria-live", "polite");
+    el.setAttribute("aria-atomic", "true");
+    document.body.appendChild(el);
+  }
+  el.setAttribute("aria-live", assertive ? "assertive" : "polite");
+  el.textContent = "";
+  requestAnimationFrame(() => {
+    el.textContent = message;
+  });
 }
-</script>
 ```
 
-**`aria-live` values**:
-- `polite` — announced after next screen reader action
-- `assertive` — announced immediately
-- `off` — not announced (default)
+```css
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+```
 
-### Modal Dialogs
+### Dialog
 
 ```html
 <div
@@ -124,179 +112,86 @@ function updateStatus(message) {
   aria-labelledby="dialog-title"
   tabindex="-1"
 >
-  <div id="dialog-title">Confirm Action</div>
-  <p>Are you sure?</p>
-  <div class="dialog-actions">
-    <button onclick="confirmAction()">Confirm</button>
-    <button onclick="closeDialog()">Cancel</button>
-  </div>
+  <h2 id="dialog-title">Confirm action</h2>
+  <p id="dialog-desc">This cannot be undone.</p>
+  <button type="button">Confirm</button>
+  <button type="button">Cancel</button>
 </div>
 ```
 
-**Modal requirements**:
-1. `role="dialog"` + `aria-modal="true"`
-2. `tabindex="-1"` + `focus()` on mount
-3. Escape key closes dialog
-4. Focus returns to trigger on close
-5. Scroll locked on background (`body { overflow: hidden }`)
-6. `aria-labelledby` or `aria-label` for accessibility label
+Requirements: labelled dialog, focus in on open, Escape closes, focus returns to trigger, background inert/scroll-locked.
 
-## Keyboard Navigation
+## Keyboard patterns
 
-### Tab Navigation
+- Links, buttons, inputs: native focus — do not add redundant handlers unless custom.
+- Custom clickable: `tabindex="0"`, Enter and Space activate.
+- Tabs (`role="tablist"`): arrows move between tabs; Home/End optional; selected tab `aria-selected="true"`.
+- Menus: arrow navigation per [APG](https://www.w3.org/WAI/ARIA/apg/).
 
-All interactive elements must be focusable via tab:
-- Links (`<a>`) — natively focusable
-- Buttons (`<button>`) — natively focusable
-- Inputs (`<input>`, `<select>`, `<textarea>`) — natively focusable
-- Custom components — `tabindex="0"` + focus styles
-
-### Keyboard Event Handlers
-
-```javascript
-// Enter key for custom clickable elements
-function handleKeydown(event) {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    element.click();
-  }
-}
-
-element.addEventListener('keydown', handleKeydown);
-```
-
-### Arrow Navigation for Tablists
-
-```javascript
-// Tab navigation
-function handleTabKeydown(event) {
-  const tabs = event.target.parentElement.querySelectorAll('[role="tab"]');
-  const currentIndex = Array.from(tabs).indexOf(event.target);
-
-  if (event.key === 'ArrowLeft') {
-    event.preventDefault();
-    const newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-    tabs[newIndex].focus();
-  }
-
-  if (event.key === 'ArrowRight') {
-    event.preventDefault();
-    const newIndex = (currentIndex + 1) % tabs.length;
-    tabs[newIndex].focus();
-  }
-}
-```
-
-## Screen Reader Compatibility
-
-### Reading Order
+## Landmarks and structure
 
 ```html
-<!-- Correct reading order -->
-<header>...</header>
+<header>…</header>
+<nav aria-label="Primary">…</nav>
 <main>
-  <h1>Page Title</h1>
-  <p>Introduction</p>
-  <article>
-    <h2>Section</h2>
-    <p>Content</p>
-  </article>
-  <aside>...</aside>
+  <h1>Page title</h1>
+  …
 </main>
-<footer>...</footer>
+<aside aria-label="Sidebar">…</aside>
+<footer>…</footer>
 ```
 
-### Landmarks
+Prefer native `<nav>`, `<main>`, `<header>`, `<footer>` over redundant roles.
 
-```html
-<header>...</header>
-<nav role="navigation" aria-label="Primary">...</nav>
-<main>...</main>
-<aside role="complementary" aria-label="Sidebar">...</aside>
-<footer>...</footer>
-```
+## Manual testing
 
-### Announce to Screen Reader
+1. Keyboard only — Tab / Shift+Tab / Enter / Space / Escape / arrows where expected.
+2. Screen reader — **VoiceOver** (macOS/iOS), **Narrator** or **NVDA** (Windows), **TalkBack** (Android).
+3. Zoom 200% — content reflows; no loss of function (Reflow where applicable).
+4. Light and dark themes — contrast still passes.
+5. Forced colors / Windows High Contrast — smoke-check critical flows when relevant.
 
-```javascript
-function announce(message, assertive = false) {
-  const announcer = document.getElementById('screen-reader-announcer') || createAnnouncer();
-  announcer.setAttribute('aria-live', assertive ? 'assertive' : 'polite');
-  announcer.textContent = message;
-  setTimeout(() => { announcer.textContent = ''; }, 1000);
-}
+## Automated testing
 
-function createAnnouncer() {
-  const announcer = document.createElement('div');
-  announcer.id = 'screen-reader-announcer';
-  announcer.setAttribute('aria-live', 'polite');
-  announcer.setAttribute('aria-live-polite', 'true');
-  announcer.style.cssText = 'position: absolute; clip: rect(0 0 0 0); overflow: hidden;';
-  document.body.appendChild(announcer);
-  return announcer;
-}
-```
-
-## Accessibility Testing
-
-### Manual Testing
-
-1. **Keyboard-only navigation** — Tab through every element, verify logical order
-2. **Screen reader test** — Test with VoiceKit (macOS) or Narrator (Windows)
-3. **Color schemes** — Test in both light and dark system color schemes
-4. **Font size** — Test with system font size (large, extra-large)
-5. **Zoom** — Test with 200% zoom (image and text)
-6. **Focus management** — Verify focus return on dialog close, modal, etc.
-
-### Automated Testing
-
-Install `axe`:
+Use **axe-core**, not a fictional `axe` npm package alone.
 
 ```bash
-npm install axe
+npm install -D @axe-core/cli axe-core
+# Against a running local server:
+npx axe http://localhost:3000 --exit
 ```
 
-Add to CI:
+In unit/component tests (example with Vitest + Testing Library + jest-axe):
 
 ```bash
-npx axe --output=reports/a11y.json http://localhost:3000
+npm install -D axe-core jest-axe vitest @testing-library/react jsdom
 ```
 
-### Visual Testing
+```ts
+import { render } from "@testing-library/react";
+import { axe } from "jest-axe";
+import { Dialog } from "./Dialog";
 
-See `docs/testing.md` for visual/snapshot testing setup.
+test("dialog has no serious axe violations", async () => {
+  const { container } = render(<Dialog open title="Confirm">Body</Dialog>);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+```
 
-## Accessibility Best Practices
+Automation catches many issues; it does **not** replace keyboard + screen-reader checks.
 
-1. **Semantic HTML first** — use `<button>`, `<nav>`, `<header>`, `<main>`, `<article>`, `<section>` before custom components
-2. **Label everything** — every interactive element has an accessible label
-3. **Describe images** — `alt` describes what the image shows; `alt=""` for decorative
-4. **Avoid overuse of ARIA** — if you can use a native element, don't use ARIA
-5. **Test with screen readers** — automation doesn't catch all accessibility issues
-6. **Design accessible first** — don't design then add accessibility; design with accessibility as a requirement
-7. **Accessible by default** — components should be accessible without extra configuration
+## Practices
 
-## Apple Human Guidelines — Accessibility
+1. Semantic HTML first (`button`, `a`, `label`, landmarks).
+2. Every interactive control has an accessible name.
+3. Do not rely on color alone for state.
+4. Errors: text explanation + programmatic association (`aria-describedby` / `aria-invalid`).
+5. Design with accessibility as a requirement, not a retrofit.
 
-| Guideline | Principle |
-|-----------|----------|
-| **Screen reader** | All content must be readable by VoiceKit; never hide content from screen readers |
-| **Dynamic content** | Announce changes to screen readers using `AXNotification` / `AXUIA11y` |
-| **Focus** | Focus must be managed explicitly for custom controls; don't rely on system focus |
-| **Motion** | Respect `prefers-reduced-motion`; reduce or disable motion when the setting is enabled |
-| **Typography** | Use system font styles; don't customize font sizes below 17pt (minimum for body text) |
-| **Color** | Use system colors; don't override with hard-coded values |
-| **Touch** | Touch targets minimum 44pt (22pt * 2); larger is better |
+## Platform notes (inspirational, not WCAG replacements)
 
-## Microsoft Accessibility Guidelines
-
-| Guideline | Principle |
-|-----------|----------|
-| **Tab order** | Logical tab order; custom components must support tab navigation |
-| **Focus** | Visible focus ring on all focusable elements |
-| **Keyboard** | All actions accessible via keyboard |
-| **ARIA** | Use ARIA roles and properties only when HTML elements are insufficient |
-| **Screen reader** | All content announced to Narrator; live regions for dynamic content |
-| **Color** | Use system colors; support for Windows Color Scheme |
-| **Motion** | Respect `prefers-reduced-motion`; reduce or disable motion when the setting is enabled |
-| **Touch** | Touch targets minimum 26pt (13pt * 2) |
+| Source | Useful defaults |
+|--------|-----------------|
+| Apple HIG | VoiceOver compatibility; Dynamic Type; ~44pt touch targets on iOS; respect Reduce Motion |
+| Fluent / WinUI | Visible focus; Narrator; respect system theme and reduced motion |

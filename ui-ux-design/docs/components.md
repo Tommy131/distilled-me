@@ -1,236 +1,188 @@
 # Component Design Patterns
 
-> Apple Human Guidelines / Fluent Design System component principles: state machines, accessible by default, responsive from day one, theme-agnostic.
+> Explicit state machines, accessible by default, responsive from the start, theme via tokens only.
 
-## State Machine Pattern
+## State machine pattern
 
-Every interactive component is a **finite state machine** with explicit states and transitions. Never use ad hoc state.
+Every interactive component has explicit states and transitions — no ad hoc boolean soup without a model.
 
-```typescript
-// Button state machine — TypeScript
-type ButtonState = 'idle' | 'loading' | 'disabled' | 'success' | 'error';
+```ts
+type ButtonState = "idle" | "loading" | "disabled" | "success" | "error";
 
-const buttonStates = {
-  IDLE: {
-    label: 'Submit',
-    icon: 'check',
-    variant: 'primary',
-    disabled: false,
-    accessibleLabel: 'Submit form',
-  },
-  LOADING: {
-    label: 'Submitting...',
-    icon: 'spinner',
-    variant: 'primary',
-    disabled: true,
-    accessibleLabel: 'Submitting form, please wait',
-  },
-  DISABLED: {
-    label: 'Submit',
-    icon: null,
-    variant: 'primary',
-    disabled: true,
-    accessibleLabel: 'Submit form (disabled)',
-  },
-  SUCCESS: {
-    label: 'Submitted',
-    icon: 'check',
-    variant: 'secondary',
-    disabled: true,
-    accessibleLabel: 'Form submitted successfully',
-  },
-  ERROR: {
-    label: 'Retry',
-    icon: 'reload',
-    variant: 'destructive',
-    disabled: false,
-    accessibleLabel: 'Retry submitting form',
-  },
+const buttonCopy: Record<ButtonState, { label: string; accessibleLabel: string; disabled: boolean }> = {
+  idle: { label: "Submit", accessibleLabel: "Submit form", disabled: false },
+  loading: { label: "Submitting…", accessibleLabel: "Submitting form, please wait", disabled: true },
+  disabled: { label: "Submit", accessibleLabel: "Submit form, disabled", disabled: true },
+  success: { label: "Submitted", accessibleLabel: "Form submitted successfully", disabled: true },
+  error: { label: "Retry", accessibleLabel: "Retry submitting form", disabled: false },
 };
 ```
 
-**Rule**: Every state has an `accessibleLabel`. The screen reader reads the accessible label, not the visual text.
+Every state that users perceive SHOULD expose an accurate accessible name (visible text and/or `aria-label`).
 
-## Component Design Principles
+## Design principles
 
-### 1. Responsive from Day One
-Every component must be designed for ≥320px width. No "desktop-first then mobile" workflow.
+1. **Responsive from day one** — usable at the project’s minimum width (default 320px).
+2. **Accessible by default** — focus styles, keyboard, names/roles.
+3. **Theme-agnostic** — semantic tokens only (`var(--color-…)`), never raw `#14479F` in components.
+4. **Consistent interaction** — same action → same pattern app-wide.
+5. **Loading / empty / error** — data views define all three; no blank failures.
 
-### 2. Accessible by Default
-Every focusable element has visible focus style, logical tab order, correct `aria-*` attributes.
-
-### 3. Theme-Agnostic
-Components consume design tokens, not direct values. No `color: #14479F` in component code.
-
-### 4. Consistent Interaction Pattern
-Same action = same interaction across the app. Click submit = submit everywhere. Drag delete = delete everywhere.
-
-### 5. Loading States
-Every data-driven component has explicit loading states (skeleton or progress). Never show loading spinners over empty data.
-
-### 6. Error States
-Every network-bound component has explicit error states with actionable recovery (retry, cancel, etc.). Never show raw API errors to users.
-
-### 7. Empty States
-Every data list has explicit empty states with helpful messaging and action items. Never show blank empty lists.
-
-## Component States
-
-### Form Inputs
+## Form inputs
 
 | State | Behavior |
 |-------|----------|
-| Default | Bordered by `--color-border-default`, label in `--color-text-secondary` |
-| Focused | Outline in `--color-primary-900`, label in `--color-text-primary` |
-| Invalid | Border in `--color-destructive-900`, error message in `--color-text-destructive` |
-| Disabled | Background `--color-bg-elevation-1`, text `--color-text-tertiary`, pointer none |
-| Read-only | Same as disabled but keyboard tabbable, focusable |
-| Required | Asterisk `*` after label in `--color-destructive-900` |
+| Default | Border `--color-border-default`, label `--color-text-secondary` |
+| Focused | Focus ring / border `--color-focus-ring`, label `--color-text-primary` |
+| Invalid | Border `--color-text-destructive` (or dedicated destructive border token), error text linked via `aria-describedby` |
+| Disabled | Muted surface/text; not in tab order if truly inert (`disabled`) |
+| Read-only | Focusable when users need to read/copy; not editable |
+| Required | Visible indicator + `aria-required="true"` or native `required` |
 
 ```css
 .input {
   border: 1px solid var(--color-border-default);
   color: var(--color-text-primary);
   background: var(--color-bg-surface);
-  transition: border-color var(--duration-normal) var(--easing-ease-in-out);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color var(--duration-normal) var(--easing-standard);
 }
 
-.input:focus {
+.input:focus-visible {
   outline: none;
-  border-color: var(--color-border-subtle);
-  box-shadow: 0 0 0 2px var(--color-primary-900),
-              0 0 0 4px rgba(14479F, 0.3);
+  border-color: var(--color-focus-ring);
+  box-shadow:
+    0 0 0 2px var(--color-bg-surface),
+    0 0 0 4px var(--color-focus-ring-outer);
 }
 
-.input:invalid {
-  border-color: var(--color-destructive-900);
+.input[aria-invalid="true"] {
+  border-color: var(--color-text-destructive);
 }
 
 .input:disabled {
-  background-color: var(--color-bg-elevation-1);
+  background: var(--color-bg-elevation-1);
   color: var(--color-text-tertiary);
-  pointer-events: none;
+  cursor: not-allowed;
 }
 ```
 
-### Buttons
+## Buttons
 
-| Variant | Primary / Secondary / Destructive / Tertiary |
-|---------|---------|
-| Default | Primary: background `--color-primary-900`, text `--color-neutral-100`; Secondary: background transparent, border `--color-border-strong`, text `--color-text-primary`; Destructive: background `--color-destructive-900`, text `--color-neutral-100`; Tertiary: background transparent, text `--color-text-primary` |
-| Hover | Primary: background `--color-primary-800`; Secondary: background `--color-neutral-900`; Destructive: background `--color-destructive-800`; Tertiary: background `--color-neutral-100` |
-| Active | Primary: background `--color-primary-900` with 8px translate; Secondary: background `--color-neutral-800`; Destructive: background `--color-destructive-800` with 2px translate; Tertiary: background `--color-neutral-50` |
-| Disabled | All: background `--color-bg-elevation-1`, text `--color-text-tertiary`, pointer none |
-| Loading | All: text "Loading...", icon spinner in center, disabled, background loading state |
+Variants: primary / secondary / destructive / tertiary.
 
 ```css
 .button--primary {
-  background-color: var(--color-primary-900);
-  color: var(--color-neutral-100);
+  background: var(--color-bg-primary);
+  color: var(--color-text-on-primary);
   border: none;
   padding: var(--space-3) var(--space-4);
-  font-family: var(--font-label);
-  border-radius: 4px;
-  transition: background-color var(--duration-normal) var(--easing-ease-in-out),
-              transform var(--duration-fast) var(--easing-ease-in-out);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--duration-normal) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-standard);
 }
 
 .button--primary:hover {
-  background-color: var(--color-primary-800);
+  background: var(--color-bg-primary-hover);
 }
 
 .button--primary:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
 }
 
 .button--primary:disabled {
-  background-color: var(--color-bg-elevation-1);
+  background: var(--color-bg-elevation-1);
   color: var(--color-text-tertiary);
-  pointer-events: none;
-  cursor: default;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .button--loading {
+  position: relative;
+  color: transparent;
   pointer-events: none;
 }
 
-.button--loading .button__text {
-  opacity: 0;
-}
-
-.button--loading .button__spinner {
-  display: block;
-}
-
-.button__spinner {
-  display: none;
+.button--loading::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: currentColor;
+  margin: -8px 0 0 -8px;
+  border: 2px solid rgb(255 255 255 / 0.3);
+  border-top-color: var(--color-text-on-primary);
   border-radius: 50%;
-  animation: spin var(--duration-slow) linear;
+  animation: spin var(--duration-deliberate) linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button--primary {
+    transition: none;
+  }
+  .button--loading::after {
+    animation: none;
+    border-color: var(--color-text-on-primary);
+  }
 }
 ```
 
-### Data Lists / Tables
+Loading buttons: keep an accessible name that reflects busy state (`aria-busy="true"` and updated label).
+
+## Data lists / tables
 
 | Pattern | When |
 |---------|------|
-| List (single column) | Single-column data, mobile, simple data |
-| Table (horizontal) | Multi-column data on desktop |
-| Cards (grid) | Rich data with images, action items, or cards |
-| Infinite scroll | Large lists with pagination alternatives |
-| Virtual list | Very large lists (>1000 items) |
+| List | Simple single-column data, mobile |
+| Table | Multi-column comparison on wider viewports |
+| Cards | Rich media + actions |
+| Virtualization | Very large lists (thousands of rows) |
 
-**Table responsive pattern**: Horizontal scroll on mobile, stacked layout on narrow screens, card grid on very narrow.
+On narrow screens: allow horizontal scroll for complex tables **or** stack into definition lists/cards — pick one pattern per product and stay consistent.
 
-### Cards
+## Cards
 
-Card structure:
-1. Image/Avatar (optional)
-2. Title (required)
-3. Description (optional)
-4. Metadata (optional)
-5. Actions (optional)
+Structure: optional media → title → description → metadata → actions.
 
-Card states: Default / Hover / Selected / Disabled
+Rules:
 
-**Card principles**:
-1. **No cards for simple data** — cards are for rich content with images, actions, or metadata. For simple tabular data, use a table or list.
-2. **Consistent card heights** — use flexbox or grid to equalize card heights in a grid.
-3. **No horizontal scrolling within cards** — vertical scrolling or truncation is acceptable; horizontal scrolling within a card is not.
-4. **Image aspect ratios** — specify image aspect ratios (e.g., `aspect-ratio: 16/9`), never let images dictate card height.
+1. Use cards for rich content; simple tabular data stays a table/list.
+2. Equalize heights in a grid with flex/grid.
+3. No horizontal scroll inside a card.
+4. Set image `aspect-ratio` so layout does not jump.
 
-### Navigation
+## Navigation
 
-| Navigation Type | Screen | Placement |
-|----------------|--------|----------|
-| Bottom bar | Mobile (<768px) | Bottom fixed, 56px height |
-| Sidebar | Desktop (≥1000px) | Left side, 240px width, sticky |
-| Tab bar | Tablet (≥768px) | Top of content area |
-| Hamburger | Mobile (≥768px) | Top-right corner, opens drawer |
+| Viewport | Pattern | Placement |
+|----------|---------|-----------|
+| &lt; 768px | Bottom bar **or** top bar + drawer | Max ~5 primary destinations |
+| ≥ 768px and &lt; 1024px | Top tabs or collapsible side nav | Keep primary destinations visible |
+| ≥ 1024px | Sidebar (≈240px) or persistent top nav | Active state always visible |
 
-**Navigation principles**:
-1. **Maximum 5 items** — navigation should have maximum 5 top-level items. More needs grouping or restructuring.
-2. **Active state** — always show which item is active with clear visual indication.
-3. **Deep nesting** — limit to 2 levels of nesting. Deeper requires breadcrumb or separate page.
-4. **Keyboard navigation** — all navigation items must be keyboard accessible, with arrow-key navigation within navigation bars.
+**Hamburger / drawer:** use on small viewports when primary links do not fit. Do **not** require hamburger on desktop if a sidebar/top nav already shows the same destinations.
 
-## Component Testing
+Principles:
 
-Every component must have visual tests (screenshot comparison) and accessibility tests (`axe` scan). See `docs/testing.md` for testing setup.
+1. Prefer ≤5 top-level items; group the rest.
+2. Clear active state.
+3. Limit nesting; use breadcrumbs for deeper hierarchy.
+4. Full keyboard support (Tab into nav; arrows inside composite widgets per APG).
 
-## Component Documentation
+## Documentation per component
 
-Every component has documentation that covers:
-1. Props/properties
-2. State machine states and transitions
-3. Slot/children API
-4. Event handlers
-5. Accessibility requirements
-6. Responsive behavior
-7. Visual states
-8. Code examples
+Document: purpose, states/transitions, props, events, a11y requirements, responsive behavior, token usage, code examples, related components. Workflow: `docs/design-process.md`.
 
-See `docs/design-process.md` for documentation workflow.
+## Testing
+
+Visual baselines + `axe-core` for each composite widget. See `docs/testing.md`.

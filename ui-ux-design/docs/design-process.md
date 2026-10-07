@@ -1,118 +1,101 @@
-# Design Process & Iteration Workflow
+# Design Process & Iteration
 
-> Design process: from prototype to production, iterating on design with measurable outcomes. Apple Human Guidelines / Fluent Design System design philosophy: design iteratively, but never compromise accessibility or performance.
+> Prototype → design-system integration → production hardening. Accessibility and performance are constraints, not polish phases.
 
-## Design Process — Three Phases
+## Phase 1 — Prototype (minimum viable)
 
-### Phase 1: Prototype (Minimum Viable)
+1. **Problem** — user goal and pain points.
+2. **Layout** — wireframe / low-fi hierarchy and flow.
+3. **Prototype in code** — testable UI beats slide-only comps for interaction work.
+4. **Validate** — self-test + user feedback when available.
+5. **Iterate** — refine interaction pattern before visual polish.
 
-1. **Define the problem** — what is the user trying to accomplish? What are the pain points?
-2. **Draft layout** — wireframe or low-fidelity mockup. Focus on information hierarchy and interaction flow, not visual design.
-3. **Prototype** — build a basic functional prototype in code (not a tool). This is the "testable" artifact.
-4. **Validate** — test with users (or yourself). Identify what needs improvement.
-5. **Iterate** — repeat steps 2-4. Each iteration should bring the prototype closer to production.
+**Goal:** discover the interaction model.
 
-**Goal**: Identify the interaction pattern. This is where you discover what works and what doesn't.
+## Phase 2 — Design system integration
 
-### Phase 2: Design System Integration
+1. **Tokens** — color, space, type, motion, breakpoints (`docs/design-system.md`, `assets/tokens.css`).
+2. **Components** — reusable state machines (`docs/components.md`).
+3. **Document** — states, props, a11y, examples.
+4. **Rebuild the prototype** from system components.
 
-1. **Define tokens** — colors, spacing, typography, motion, breakpoints for the design.
-2. **Implement components** — build reusable components using design tokens (see `docs/components.md`).
-3. **Document components** — for each component: states, props, accessibility requirements, code examples.
-4. **Build the prototype** — assemble the prototype from design system components.
+**Goal:** consistency, theming, and accessible defaults.
 
-**Goal**: Establish the design system. Every component must be consistent, accessible, and theme-agnostic.
+## Phase 3 — Production hardening
 
-### Phase 3: Production Hardening
+1. **Performance** — measure load/interaction; fix regressions.
+2. **Accessibility** — `axe-core` + keyboard + screen reader (`docs/accessibility.md`, WCAG 2.2 AA).
+3. **Responsive** — agreed breakpoints; no layout shift on primary routes.
+4. **User testing** — fix blocking issues.
+5. **Release**.
 
-1. **Performance audit** — measure load time, render time, memory, and interaction response time. Optimize.
-2. **Accessibility audit** — run `axe` scan. Test with screen readers. Fix issues.
-3. **Responsive testing** — test at all breakpoints. Ensure no layout shift on load.
-4. **User testing** — test with real users. Identify issues. Iterate.
-5. **Release** — ship.
+## Iteration checklist
 
-**Goal**: Make the product production-ready. No accessibility bypass, no layout shift, no performance regression.
+- [ ] Interaction pattern clear and consistent
+- [ ] Information hierarchy clear
+- [ ] Keyboard and screen-reader paths still work
+- [ ] Performance within budget
+- [ ] Responsive at agreed breakpoints
+- [ ] Tokens/system conventions followed
+- [ ] Feedback from users addressed when it blocks tasks
 
-## Iteration Workflow
+### Priority order
 
-### Design Iteration Checklist
+1. Accessibility  
+2. Performance / correctness  
+3. User feedback on task success  
+4. Consistency  
+5. Visual polish  
 
-When iterating on a design, go through this checklist:
+### Time budget (guideline)
 
-- [ ] **Interaction pattern** — is the interaction pattern clear and consistent?
-- [ ] **Information hierarchy** — is the information hierarchy clear? Is the most important information most prominent?
-- [ ] **Accessibility** — does the new interaction pattern maintain keyboard navigation? Does screen reader read it correctly?
-- [ ] **Performance** — does the new interaction pattern affect load time or render time?
-- [ ] **Responsive** — does the new interaction pattern work on all device sizes?
-- [ ] **Consistency** — does the new interaction pattern follow design system conventions?
-- [ ] **User testing** — have you tested the new interaction pattern with users?
+| Phase | Share |
+|-------|-------|
+| Prototype | 20–30% |
+| System integration | 30–40% |
+| Production hardening | 30–40% |
+| Extra iteration buffer | 10–20% |
 
-### Iteration Priorities (in order)
+If the buffer is exhausted: cut scope, change the design (not the accessibility bar), or document accepted limitations.
 
-1. **Accessibility** — never iterate on a design that breaks accessibility. Accessibility is non-negotiable.
-2. **Performance** — never iterate on a design that degrades performance beyond budget. Performance is a hard requirement.
-3. **User feedback** — iterate on designs that users say don't work. Don't iterate on designs that users think are fine.
-4. **Consistency** — iterate on inconsistencies in the design system. Consistency is a requirement.
-5. **Visual polish** — iterate on visual polish last. It's the least important of all the above.
+## Design decision record (lightweight)
 
-### Iteration Time Budget
+For significant decisions:
 
-| Phase | Time Budget | Notes |
-|-------|-------------|-------|
-| Prototype (Phase 1) | 20-30% of total time | Iterate as needed |
-| Design System (Phase 2) | 30-40% of total time | Must be thorough |
-| Production Hardening (Phase 3) | 30-40% of total time | Non-negotiable |
-| Iteration | 10-20% of total time | Budget for iteration |
+1. Problem  
+2. Proposed solution  
+3. Constraints (a11y, performance, platforms)  
+4. How constraints are met  
+5. Implementation notes  
+6. Open questions  
 
-**Rule**: If you hit the iteration budget, you need to either:
-1. Cut scope — ship less, not worse
-2. Change the design — iterate on the design, not on the design system
-3. Accept the limitation — document it in a design doc
+## Component doc template
 
-## Design Documentation
+1. Description  
+2. States  
+3. Props  
+4. Events  
+5. Accessibility  
+6. Responsive behavior  
+7. Code examples  
+8. Related components  
 
-### Design Document Template
+## Evaluation criteria
 
-Every significant design decision should be documented:
+| Criterion | Bar |
+|-----------|-----|
+| Consistency | Shared tokens and patterns |
+| Accessibility | WCAG 2.2 AA intent; no critical axe issues; keyboard works |
+| Performance | Budgets in DESIGN; no unbounded CLS on primary views |
+| Responsive | Agreed breakpoints; no horizontal scroll on primary mobile flows |
+| Usability | Users can complete tasks with clear feedback |
+| Maintainability | Components reusable; system documented |
 
-1. **Problem statement** — what problem is the design solving?
-2. **Proposed solution** — what is the design?
-3. **Constraints** — what are the constraints (performance, accessibility, responsiveness)?
-4. **Constraints checklist** — how does the proposed solution address each constraint?
-5. **Implementation notes** — any implementation notes (components, tokens, APIs)?
-6. **Open questions** — any open questions? (These are the questions to iterate on.)
+## When to document a decision
 
-### Component Documentation Template
+- Deviates from system conventions  
+- Trades off competing principles  
+- Affects a11y, performance, or information architecture  
+- Likely to be questioned later  
 
-Every component needs documentation:
-
-1. **Component description** — what does this component do?
-2. **States** — all component states (default, hover, focus, active, disabled, loading, error, etc.)
-3. **Props/properties** — what props does the component accept?
-4. **Events** — what events does the component emit?
-5. **Accessibility** — what are the accessibility requirements?
-6. **Responsive behavior** — how does the component behave on different screen sizes?
-7. **Code examples** — example code for each state.
-8. **Related components** — what other components does this component interact with?
-
-## Design Evaluation Criteria
-
-| Criterion | Requirement |
-|-----------|-----------|
-| **Consistency** | All components follow the same design system conventions |
-| **Accessibility** | All components pass `axe` scan with zero critical errors; keyboard navigation works |
-| **Performance** | Load time < 2s (mobile), < 3s (desktop); no layout shift on load; no memory leaks |
-| **Responsive** | Works on all device sizes (320px to 1440px); no horizontal scrolling on mobile |
-| **Usability** | Users can accomplish their tasks without confusion; clear visual feedback for actions |
-| **Maintainability** | Components are modular and reusable; code is well-documented; design system is documented |
-
-## Design Decisions — When to Document
-
-Document a design decision when:
-
-1. It deviates from design system conventions
-2. It involves a trade-off between competing design principles
-3. It has a measurable impact on the design or implementation
-4. It is likely to be questioned by users or team members
-
-**Rule**: If you don't know if you should document, document it. Better to over-document than to lose context.
+When unsure, write a short note — cheaper than rediscovering context.

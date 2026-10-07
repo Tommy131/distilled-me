@@ -1,104 +1,123 @@
 ---
 name: ui-ux-design
-description: Design, code, and review UI/UX following Apple Human Guidelines / Fluent Design System principles: token-driven theming, WCAG 2025 accessibility compliance, responsive/adaptive layouts, motion-on-purpose, and a strict design-to-code workflow. Use when designing components, writing CSS/Tailwind, building screens, reviewing UI code for a11y/accessibility/responsiveness, or establishing a design system.
-disable-model-invocation: true
+description: >
+  Design, implement, and review UI/UX with a token-driven design system, WCAG 2.2 AA
+  accessibility, responsive/adaptive layout, and motion-on-purpose. Covers design tokens,
+  component state machines, focus/keyboard/screen-reader requirements, breakpoints, theming,
+  and design-to-code workflow. Use when designing components or screens, writing CSS/Tailwind,
+  establishing or extending a design system, reviewing UI for a11y/responsiveness/theming, or
+  when the user mentions accessibility, WCAG, design tokens, focus rings, or reduced motion.
+  Prefer this skill for systemized UI/a11y work; use a general frontend-design skill for one-off
+  visual styling without a design-system workflow.
 ---
 
 # Design System & UX Specification
 
-A language-agnostic design system modeled on Apple Human Guidelines and Microsoft Fluent — token-driven theming, WCAG 2025 compliance, responsive/adaptive, motion-on-purpose, and a strict workflow from prototype to production.
+Token-driven UI system inspired by Apple HIG and Microsoft Fluent ideas: semantic tokens, WCAG 2.2 AA, responsive layout, motion-on-purpose, and a prototype → system → production workflow.
 
-**Never apply component changes ad hoc.** Always go through the design process.
+**Never apply component changes ad hoc.** Go through the design process (`docs/design-process.md`) unless the user explicitly asks for a quick one-off tweak.
 
 ## Workflow Overview
 
-| Phase | Loading |
-|-------|---------|
-| Design tokens & layout | `docs/design-system.md` + `docs/layout.md` |
+| Phase | Load |
+|-------|------|
+| Design tokens & theming | `docs/design-system.md` + `assets/tokens.css` |
+| Layout & breakpoints | `docs/layout.md` |
 | Component states & patterns | `docs/components.md` |
-| Accessibility & a11y | `docs/accessibility.md` |
+| Accessibility (WCAG 2.2 AA) | `docs/accessibility.md` |
 | Motion & animation | `docs/motion.md` |
 | Design process & iteration | `docs/design-process.md` |
 | Testing & QA | `docs/testing.md` |
 
-## Non-Negotiable Guardrails (any phase)
+Load only the docs needed for the current task.
 
-1. **No accessibility bypass** — every focusable element has visible focus style, logical tab order, correct `aria-*` attributes, and passes `axe` scans with zero critical errors.
-2. **No layout shift on load** — content must be laid out (skeleton if needed) before network requests resolve.
-3. **Motion is optional, never required** — every motion has a reduced-motion media query; motion cannot affect accessibility or functionality.
-4. **Design tokens are the source of truth** — never hardcode colors, spacing, or typography values in component code.
-5. **Responsive ≥1000px breakpoints** — all components must function and be tested at ≥1000px (desktop minimum), ≥768px (tablet), ≥320px (narrow mobile).
-6. **Dark/light mode toggle always present** — system-prepared, user-preferred, explicit toggle for non-system themes (OS-level color scheme applies first; user toggle is additive).
+## Guardrails
 
-## Quick Reference: Token Usage
+### Always (non-negotiable)
+
+1. **No accessibility bypass** — focusable controls have visible `:focus-visible` styles, logical tab order, correct names/roles; aim for zero critical `axe-core` violations.
+2. **No layout shift on load** — reserve space (skeleton/placeholder) before late content arrives.
+3. **Motion is optional** — every animation has a `prefers-reduced-motion` fallback; motion must not break focus, tab order, or screen-reader announcements.
+4. **Tokens are source of truth** — no raw hex/spacing/type values in component code; use semantic CSS variables (see `assets/tokens.css`).
+
+### Defaults (may trim — declare in project docs)
+
+5. **Breakpoints** — default set: 320 / 480 / 768 / 1024 / 1280 / 1440. Desktop “comfortable” target is ≥1024px. Mobile-only or embedded UIs MAY drop unused breakpoints in `DESIGN` / design-system docs.
+6. **Theme control** — support `prefers-color-scheme` and light/dark semantic tokens. An explicit in-app theme toggle is the **default for multi-page apps**; landing pages, emails, or OS-native shells MAY omit the toggle if system scheme is enough — document the choice.
+
+## Quick Reference: Tokens
+
+Use semantic tokens in components. Full list: `docs/design-system.md` and `assets/tokens.css`.
 
 ```css
-/* Color tokens */
+/* Color */
 --color-text-primary, --color-text-secondary, --color-text-tertiary
 --color-bg-surface, --color-bg-elevation-1, --color-bg-elevation-2
 --color-border-subtle, --color-border-default, --color-border-strong
+--color-focus-ring
 
-/* Spacing tokens */
---space-0 (0px), --space-1 (2px), --space-2 (4px), --space-3 (8px)
---space-4 (12px), --space-5 (16px), --space-6 (24px), --space-7 (32px)
---space-8 (40px), --space-9 (48px), --space-10 (64px)
+/* Spacing (4px base grid; 2px only for hairline tweaks) */
+--space-0 … --space-10  /* 0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64 */
 
-/* Typography tokens */
---font-display, --font-heading, --font-body, --font-label, --font-caption
+/* Typography roles (use longhands, not fake font shorthand) */
+--font-family-sans
+--font-size-display, --font-size-heading, --font-size-body, --font-size-label, --font-size-caption
+--line-height-display, --line-height-heading, --line-height-body, …
 --font-weight-regular (400), --font-weight-semibold (600), --font-weight-bold (700)
 
-/* Motion tokens */
---duration-fast (48ms), --duration-normal (100ms), --duration-slow (200ms)
---duration-very-slow (320ms)
---easing-ease-in, --easing-ease-out, --easing-ease-in-out, --easing-linear
---easing-bezier-fast, --easing-bezier-spring, --easing-bezier-easy-out
+/* Motion */
+--duration-fast (120ms), --duration-normal (200ms), --duration-slow (300ms), --duration-deliberate (450ms)
+--easing-standard, --easing-emphasized, --easing-entrance, --easing-exit
 ```
 
-## Quick Reference: WCAG 2025 Compliance
+## Quick Reference: WCAG 2.2 AA
 
-| Category | Required |
-|-----------|-----------|
-| Tab order logical | All interactive elements in logical tab order |
-| Focus visible | Focus ring on all focusable elements |
-| Keyboard | All actions keyboard accessible, no exclusive mouse |
-| ARIA roles | Correct use of `role`, `aria-label`, `aria-live`, `aria-expanded`, `aria-modal` |
-| Language | `lang` attribute on all content, `<meta name="description">` |
-| Alt images | All images have `alt`; decorative images `alt=""` |
-| Headings | One `<h1>` per page, proper heading hierarchy |
-| Screen reader | All content announced to screen readers |
+| Area | Requirement |
+|------|-------------|
+| Keyboard | All actions reachable and operable by keyboard |
+| Focus visible | `:focus-visible` indicator on every focusable control |
+| Focus order | Matches visual/reading order; no tabindex > 0 |
+| Name, Role, Value | Correct accessible name; native elements preferred over ARIA |
+| Contrast | Text ≥ 4.5:1 (normal), ≥ 3:1 (large); UI components/graphics ≥ 3:1 |
+| Images | Informative images have `alt`; decorative use `alt=""` |
+| Headings | One `<h1>` per page; hierarchical headings |
+| Language | `lang` on `<html>` (and on foreign phrases when needed) |
+| Target size | Interactive targets meet WCAG 2.2 minimum target size (AA) |
+| Status | Errors and updates exposed via text and/or polite/assertive live regions |
 
-For the full WCAG 2025 criteria checklist, see `docs/accessibility.md`.
+Full criteria and patterns: `docs/accessibility.md`.
 
-## Quick Reference: Responsive Breakpoints
+## Quick Reference: Breakpoints
 
-| Breakpoint | Device | Notes |
-|------------|--------|-------|
-| 320px | Narrow mobile | Minimum safe width; horizontal padding ≤ `space-4` |
-| 480px | Standard mobile | Small screens |
-| 768px | Tablet | Medium screens |
-| 1000px | Desktop | Desktop minimum |
-| 1280px | Large desktop | Max width container |
-| 1440px | Large display | No max-width |
+| Breakpoint | Role |
+|------------|------|
+| 320px | Narrow mobile floor |
+| 480px | Phone |
+| 768px | Tablet |
+| 1024px | Desktop default |
+| 1280px | Large desktop / max content width often starts |
+| 1440px | Wide display |
 
-For grid system details, see `docs/layout.md`.
+Details: `docs/layout.md`.
 
-## Quick Reference: Motion Principles
+## Quick Reference: Motion
 
 | Principle | Guideline |
 |-----------|-----------|
-| **Motion-on-purpose** | Every animation has a semantic purpose: draw attention, guide focus, or communicate state change |
-| **Consistency** | Same interaction pattern = same motion timing and easing |
-| **Reduced motion** | Always include `@media (prefers-reduced-motion: reduce)` fallback |
-| **Accessibility** | Motion cannot affect tab order, focus management, or screen reader announcements |
+| Purpose | Attention, focus guidance, or state change — no decorative-only motion that blocks tasks |
+| Consistency | Same interaction → same duration/easing |
+| Reduced motion | `@media (prefers-reduced-motion: reduce)` |
+| Performance | Prefer `transform` and `opacity` |
 
-For complete motion guidelines, see `docs/motion.md`.
+Details: `docs/motion.md`.
 
 ## Additional Resources
 
-- For complete design system tokens and token architecture, see [design-system.md](docs/design-system.md)
-- For layout, grid, and responsive system, see [layout.md](docs/layout.md)
-- For component patterns and state machines, see [components.md](docs/components.md)
-- For accessibility criteria and tooling, see [accessibility.md](docs/accessibility.md)
-- For motion guidelines, see [motion.md](docs/motion.md)
-- For design workflow and iteration, see [design-process.md](docs/design-process.md)
-- For testing and QA workflows, see [testing.md](docs/testing.md)
+- [design-system.md](docs/design-system.md) — token architecture
+- [assets/tokens.css](assets/tokens.css) — copy-ready CSS variables
+- [layout.md](docs/layout.md) — grid and responsive rules
+- [components.md](docs/components.md) — state machines and patterns
+- [accessibility.md](docs/accessibility.md) — WCAG 2.2 AA
+- [motion.md](docs/motion.md) — motion guidelines
+- [design-process.md](docs/design-process.md) — workflow
+- [testing.md](docs/testing.md) — visual / a11y / responsive QA
