@@ -1,0 +1,14 @@
+# 编辑器与系统
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# 评测产物（skill 迭代时生成，不入库）
+*-workspace/
+**/iteration-*/
+**/feedback.json
+**/benchmark.json
+**/grading.json
+**/timing.json
