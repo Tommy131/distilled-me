@@ -1,6 +1,6 @@
 ---
 name: ui-ux-design
-description: Design, code, and review UI/UX following Apple/Microsoft-grade design system principles: token-driven theming, WCAG 2025 accessibility compliance, responsive/adaptive layouts, motion-on-purpose, and a strict design-to-code workflow. Use when designing components, writing CSS/Tailwind, building screens, reviewing UI code for a11y/accessibility/responsiveness, or establishing a design system.
+description: Design, code, and review UI/UX following Apple Human Guidelines / Fluent Design System principles: token-driven theming, WCAG 2025 accessibility compliance, responsive/adaptive layouts, motion-on-purpose, and a strict design-to-code workflow. Use when designing components, writing CSS/Tailwind, building screens, reviewing UI code for a11y/accessibility/responsiveness, or establishing a design system.
 disable-model-invocation: true
 ---
 
