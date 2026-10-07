@@ -1,6 +1,13 @@
 ---
-name: engineering-playbook
-description: 与编程语言无关的通用工程规范与脚手架基线 —— 提炼自多套真实项目（.NET/WPF 桌面、Flutter 跨平台、C++20 后端 + React/TS 前端），用于在任意语言/框架下快速搭脚手架、统一开发思路与质量标准。对标 ISO/IEC 25010、ISO/IEC/IEEE 29148/42010、IEEE 1016、ISO/IEC/IEEE 29119、SOLID、SemVer、Conventional Commits。
+name: software-engineering
+description: >
+  Language-agnostic engineering playbook for scaffolding, architecture, coding standards,
+  testing, security, observability, API design, workflow/release, and AI collaboration.
+  Distilled from real multi-stack projects (.NET/WPF, Flutter, C++20 + React/TS). Aligns with
+  ISO/IEC 25010, IEEE 1016/42010/29148, ISO/IEC/IEEE 29119, SOLID, SemVer, Conventional Commits.
+  Use when starting a new project, scaffolding a repo, writing DESIGN/ADR docs, reviewing code
+  or PRs, designing APIs/data/i18n, setting CI/quality gates, planning releases/rollbacks, or
+  constraining AI-generated code. Also use for 工程规范、脚手架、架构评审、质量门禁、提交发布.
 metadata:
   type: reference
   scope: cross-project, cross-language
@@ -13,6 +20,16 @@ metadata:
 >
 > **本文件是路由入口，不是全文**：先按下表识别任务场景，再加载对应子文档（`docs/`），**不要一次性加载全部子文档**。子文档保留原章节编号（§N），交叉引用按编号解析。
 > 标注约定：**MUST / SHOULD / MAY** 取 RFC 2119 语义；括注国际标准号（ISO / IEC / IEEE）。
+
+## 通用原则 vs 项目默认
+
+| 类别 | 含义 | 如何覆盖 |
+|------|------|----------|
+| **通用门禁** | 铁律 1–7、依赖单向、凭据不入库、边界错误模型、需求可追溯 | 不可静默跳过；B 档项目必须遵守 |
+| **手册默认** | 文档一律进 `docs/`、核心包依赖预算 ≤5、零依赖落地、模块注册表形态 | 可裁剪；**必须在项目 `CLAUDE.md` / `docs/DESIGN.md` 声明差异** |
+| **按栈惯例** | 命名表、工程基线开关等多列对照 | **按栈取一、项目内统一**，取舍写入 `CLAUDE.md`，禁止混用两套 |
+
+裁剪可以，一经声明必须贯穿；未声明则按本手册默认执行。
 
 ## 路由表：任务场景 → 子文档
 
@@ -44,7 +61,7 @@ metadata:
 | **模块化可插拔** | 功能以模块注册，彼此零硬耦合；加功能不改稳定核心 |
 | **幂等可重入** | 重复执行结果一致，可中断重跑；写操作前先检测 |
 | **可复现** | 钉版本 + 校验和 + 路径变量化；不假设隐式环境 |
-| **零依赖落地** | 目标环境无需预装即可启动 |
+| **零依赖落地** | 目标环境无需预装即可启动（手册默认；嵌入式/受管运行时可声明豁免） |
 | **失败隔离** | 单点失败不连坐，最后统一汇报 |
 | **可观测** | 每次运行产出结构化日志 + 人读汇总 |
 | **安全优先** | 凭据永不入库；敏感项默认排除 |
@@ -55,7 +72,7 @@ metadata:
 
 1. **依赖单向向内**：领域层 MUST NOT 依赖上层/框架/IO；引擎/核心库 MUST NOT 依赖任何 UI 框架；反向依赖、跨层穿透、协议细节（HTTP/JSON、SQL、控件类型）泄漏进领域层 —— 一律拒绝。
 2. **加功能不做外科手术**：新增功能 = 加一个模块目录 + 注册一行 + 数据文件，**不修改稳定核心**（OCP）。
-3. **文档落盘铁律**：除 `README*`（含语言变体）与工具强制置根文件（`CLAUDE.md`/`LICENSE`/`CONTRIBUTING.md`）外，一切生成的文档 MUST 落在 `<repo>/docs/`，禁止散落在仓库根或源码目录。
+3. **文档落盘铁律**（手册默认）：除 `README*`（含语言变体）与工具强制置根文件（`CLAUDE.md`/`LICENSE`/`CONTRIBUTING.md`）外，一切生成的文档 MUST 落在 `<repo>/docs/`，禁止散落在仓库根或源码目录。项目若另有文档布局，MUST 在 `CLAUDE.md` 声明。
 4. **需求可编号、可追溯**：FR/NFR → 设计章节 → 代码模块 → 测试用例，全链路可回溯。
 5. **凭据永不入库**：私钥/token/密码 MUST NOT 进版本库；机密经环境变量/密钥库注入。
 6. **公共边界不抛原始异常**：边界返回显式结果类型（`Result<T,E>` / `error_code` / `{error: ...}`）；内部/热路径/后台线程记录 + 优雅降级，绝不崩溃。
@@ -81,3 +98,4 @@ metadata:
 - **两类条款**：核心原则与铁律是**门禁**（强制）；子文档中带 SHOULD / MAY 的规范是**参考**，按项目声明后统一执行。
 - **两份必备文件**：每个项目根目录都应有 `CLAUDE.md`（或 `CONTRIBUTING.md`）—— 项目**专属**约定 + 指向权威设计；`docs/DESIGN.md` —— 权威设计（唯一事实来源）。本手册是它们的**上游母本**：项目文件只写"本项目的差异点"，通则引用本手册。
 - **冲突处理**：子文档中多栈对照表（如命名表、工程基线开关）每列是来源项目该栈的惯例；采纳时**按栈取一、项目内统一**，并把取舍写进 CLAUDE.md，不在一个项目里混用两套。
+- **加载纪律**：每次任务只加载路由表指向的子文档；完成后再按需追加，避免上下文膨胀。
