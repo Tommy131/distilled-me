@@ -1,123 +1,103 @@
 ---
 name: ui-ux-design
 description: >
-  Design, implement, and review UI/UX with a token-driven design system, WCAG 2.2 AA
-  accessibility, responsive/adaptive layout, and motion-on-purpose. Covers design tokens,
-  component state machines, focus/keyboard/screen-reader requirements, breakpoints, theming,
-  and design-to-code workflow. Use when designing components or screens, writing CSS/Tailwind,
-  establishing or extending a design system, reviewing UI for a11y/responsiveness/theming, or
-  when the user mentions accessibility, WCAG, design tokens, focus rings, or reduced motion.
-  Prefer this skill for systemized UI/a11y work; use a general frontend-design skill for one-off
-  visual styling without a design-system workflow.
+  Design, implement, and review UI/UX with the OwO token-driven design system (Flutter
+  AppThemeData / Flight web CSS vars), WCAG 2.2 AA, responsive shells (sidebar 200/60,
+  mobile bottom nav), and motion-on-purpose. Use when designing components or screens,
+  writing CSS/Tailwind/Flutter themes, establishing a design system, reviewing a11y or
+  theming, or working on OwO apps (dashboard, flight assistant, bahnklar, middleware web,
+  ai-studio, exam-trainer, win-deploy). Prefer this for systemized UI/a11y; use a general
+  frontend-design skill for one-off visual styling without design-system workflow.
 ---
 
-# Design System & UX Specification
+# OwO Design System & UX Specification
 
-Token-driven UI system inspired by Apple HIG and Microsoft Fluent ideas: semantic tokens, WCAG 2.2 AA, responsive layout, motion-on-purpose, and a prototype → system → production workflow.
+Token-driven UI distilled from OwO products (Flutter shells + Flight web port + Studio/Exam/WinDeploy variants). WCAG 2.2 AA, flat bordered surfaces, primary triad theming, sidebar/bottom-nav shells.
 
-**Never apply component changes ad hoc.** Go through the design process (`docs/design-process.md`) unless the user explicitly asks for a quick one-off tweak.
+**Never apply component changes ad hoc.** Follow `docs/design-process.md` unless the user asks for a quick one-off tweak. Provenance: `docs/owo-sources.md`.
 
 ## Workflow Overview
 
 | Phase | Load |
 |-------|------|
-| Design tokens & theming | `docs/design-system.md` + `assets/tokens.css` |
-| Layout & breakpoints | `docs/layout.md` |
-| Component states & patterns | `docs/components.md` |
+| OwO tokens & theming | `docs/design-system.md` + `assets/tokens.css` |
+| Layout shells & breakpoints | `docs/layout.md` |
+| Component recipes | `docs/components.md` |
 | Accessibility (WCAG 2.2 AA) | `docs/accessibility.md` |
-| Motion & animation | `docs/motion.md` |
-| Design process & iteration | `docs/design-process.md` |
+| Motion | `docs/motion.md` |
+| Design process | `docs/design-process.md` |
 | Testing & QA | `docs/testing.md` |
+| Source map | `docs/owo-sources.md` |
 
-Load only the docs needed for the current task.
+Load only what the task needs.
 
 ## Guardrails
 
-### Always (non-negotiable)
+### Always
 
-1. **No accessibility bypass** — focusable controls have visible `:focus-visible` styles, logical tab order, correct names/roles; aim for zero critical `axe-core` violations.
-2. **No layout shift on load** — reserve space (skeleton/placeholder) before late content arrives.
-3. **Motion is optional** — every animation has a `prefers-reduced-motion` fallback; motion must not break focus, tab order, or screen-reader announcements.
-4. **Tokens are source of truth** — no raw hex/spacing/type values in component code; use semantic CSS variables (see `assets/tokens.css`).
+1. **No accessibility bypass** — visible `:focus-visible`, logical tab order, correct names/roles; zero critical `axe-core` issues on changed UI.
+2. **No layout shift on load** — reserve space before late content.
+3. **Motion optional** — `prefers-reduced-motion` fallbacks; motion must not break focus or SR announcements.
+4. **Tokens only** — no raw hex/spacing/type in components; use `assets/tokens.css` or Flutter `AppThemeData` helpers.
 
-### Defaults (may trim — declare in project docs)
+### OwO defaults (trim only if documented)
 
-5. **Breakpoints** — default set: 320 / 480 / 768 / 1024 / 1280 / 1440. Desktop “comfortable” target is ≥1024px. Mobile-only or embedded UIs MAY drop unused breakpoints in `DESIGN` / design-system docs.
-6. **Theme control** — support `prefers-color-scheme` and light/dark semantic tokens. An explicit in-app theme toggle is the **default for multi-page apps**; landing pages, emails, or OS-native shells MAY omit the toggle if system scheme is enough — document the choice.
+5. **Shell breakpoints** — mobile `<650`, desktop `≥1242`; desktop min content ~1000px; sidebar 200/60.
+6. **Theme** — system/light/dark + primary triad presets for shell apps; dark-only tools (Studio/Exam) set `[data-product]` and document it.
+7. **Surfaces** — flat cards (elevation 0 + 1px border + radius 12).
 
-## Quick Reference: Tokens
-
-Use semantic tokens in components. Full list: `docs/design-system.md` and `assets/tokens.css`.
+## Quick Reference: OwO tokens
 
 ```css
-/* Color */
---color-text-primary, --color-text-secondary, --color-text-tertiary
---color-bg-surface, --color-bg-elevation-1, --color-bg-elevation-2
---color-border-subtle, --color-border-default, --color-border-strong
---color-focus-ring
+/* Brand triad (默认紫) */
+--color-primary: #6C5CE7;
+--color-secondary: #A29BFE;
+--color-accent: #00B894;
 
-/* Spacing (4px base grid; 2px only for hairline tweaks) */
---space-0 … --space-10  /* 0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64 */
+/* Surfaces light → dark */
+--color-background: #F5F6FA; /* dark #1A1A2E */
+--color-surface: #FFFFFF;    /* dark #16213E */
+--color-text-primary / --color-text-secondary
+--color-border
 
-/* Typography roles (use longhands, not fake font shorthand) */
---font-family-sans
---font-size-display, --font-size-heading, --font-size-body, --font-size-label, --font-size-caption
---line-height-display, --line-height-heading, --line-height-body, …
---font-weight-regular (400), --font-weight-semibold (600), --font-weight-bold (700)
+/* Space / radius / motion */
+--space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px;
+--radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
+--anim-duration: 300ms;
 
-/* Motion */
---duration-fast (120ms), --duration-normal (200ms), --duration-slow (300ms), --duration-deliberate (450ms)
---easing-standard, --easing-emphasized, --easing-entrance, --easing-exit
+/* Chrome */
+--sidebar-expanded: 200px; --sidebar-collapsed: 60px;
+--bp-mobile-max: 649px; --bp-desktop-min: 1242px;
 ```
+
+Product accents: `[data-product="studio"|"exam"|"win-deploy"]`. Full file: `assets/tokens.css`.
+
+## Quick Reference: Type
+
+| Role | Size | Notes |
+|------|------|-------|
+| Display | 32 / 28 / 24 | Noto Sans SC, bold/semibold |
+| Headline / AppBar | 20 | Often Microsoft YaHei |
+| Body | 16 / 14 | Default UI 14, lh 1.5 |
+| Label / caption | 12 / 11 | |
+| Mono | JetBrains / Cascadia | Telemetry & code |
 
 ## Quick Reference: WCAG 2.2 AA
 
-| Area | Requirement |
-|------|-------------|
-| Keyboard | All actions reachable and operable by keyboard |
-| Focus visible | `:focus-visible` indicator on every focusable control |
-| Focus order | Matches visual/reading order; no tabindex > 0 |
-| Name, Role, Value | Correct accessible name; native elements preferred over ARIA |
-| Contrast | Text ≥ 4.5:1 (normal), ≥ 3:1 (large); UI components/graphics ≥ 3:1 |
-| Images | Informative images have `alt`; decorative use `alt=""` |
-| Headings | One `<h1>` per page; hierarchical headings |
-| Language | `lang` on `<html>` (and on foreign phrases when needed) |
-| Target size | Interactive targets meet WCAG 2.2 minimum target size (AA) |
-| Status | Errors and updates exposed via text and/or polite/assertive live regions |
+Keyboard operable · focus visible · order matches reading · name/role/value · contrast 4.5:1 text · images `alt` · one `h1` · `lang` · target size · status messages. Details: `docs/accessibility.md`.
 
-Full criteria and patterns: `docs/accessibility.md`.
+## Quick Reference: Shells
 
-## Quick Reference: Breakpoints
-
-| Breakpoint | Role |
-|------------|------|
-| 320px | Narrow mobile floor |
-| 480px | Phone |
-| 768px | Tablet |
-| 1024px | Desktop default |
-| 1280px | Large desktop / max content width often starts |
-| 1440px | Wide display |
-
-Details: `docs/layout.md`.
-
-## Quick Reference: Motion
-
-| Principle | Guideline |
-|-----------|-----------|
-| Purpose | Attention, focus guidance, or state change — no decorative-only motion that blocks tasks |
-| Consistency | Same interaction → same duration/easing |
-| Reduced motion | `@media (prefers-reduced-motion: reduce)` |
-| Performance | Prefer `transform` and `opacity` |
-
-Details: `docs/motion.md`.
+| Viewport | Pattern |
+|----------|---------|
+| Mobile | AppBar + content + bottom nav (≤5) + optional drawer |
+| Desktop | Collapsible sidebar 200/60 + AppBar + content |
+| Tools | Sticky topbar + max-width content (Exam/Studio) |
 
 ## Additional Resources
 
+- [owo-sources.md](docs/owo-sources.md) — distillation sources & presets
 - [design-system.md](docs/design-system.md) — token architecture
-- [assets/tokens.css](assets/tokens.css) — copy-ready CSS variables
-- [layout.md](docs/layout.md) — grid and responsive rules
-- [components.md](docs/components.md) — state machines and patterns
-- [accessibility.md](docs/accessibility.md) — WCAG 2.2 AA
-- [motion.md](docs/motion.md) — motion guidelines
-- [design-process.md](docs/design-process.md) — workflow
-- [testing.md](docs/testing.md) — visual / a11y / responsive QA
+- [assets/tokens.css](assets/tokens.css) — copy-ready CSS
+- [layout.md](docs/layout.md) · [components.md](docs/components.md) · [motion.md](docs/motion.md)
+- [accessibility.md](docs/accessibility.md) · [design-process.md](docs/design-process.md) · [testing.md](docs/testing.md)

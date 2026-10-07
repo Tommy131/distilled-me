@@ -1,35 +1,35 @@
-# UI/UX Design System & Workflow
+# UI/UX Design System (OwO)
 
-Token-driven design system and UX workflow (Apple HIG / Fluent-inspired). WCAG 2.2 AA, responsive layout, motion-on-purpose.
+OwO-distilled design system: Flutter `AppThemeData` + Flight Middleware web CSS variables, with Studio / Exam / WinDeploy accent variants. WCAG 2.2 AA, flat bordered cards, sidebar/bottom-nav shells.
 
 ## Usage
 
-Invoke via `/ui-ux-design` or ask for design-system / a11y / token work. The agent should load `SKILL.md` then only the `docs/` files needed for the task.
+Invoke via `/ui-ux-design` or ask for OwO theming / design-system / a11y work. Load `SKILL.md`, then only the needed `docs/` files.
 
 ## Documentation
 
 | Topic | Document |
 |-------|----------|
-| Design tokens & theming | `docs/design-system.md` |
-| Copy-ready CSS tokens | `assets/tokens.css` |
-| Layout & responsive design | `docs/layout.md` |
-| Component patterns | `docs/components.md` |
-| Accessibility (WCAG 2.2 AA) | `docs/accessibility.md` |
-| Motion & animation | `docs/motion.md` |
-| Design process | `docs/design-process.md` |
-| Testing & QA | `docs/testing.md` |
+| Source projects & presets | `docs/owo-sources.md` |
+| Design tokens | `docs/design-system.md` |
+| Copy-ready CSS | `assets/tokens.css` |
+| Layout shells | `docs/layout.md` |
+| Components | `docs/components.md` |
+| Accessibility | `docs/accessibility.md` |
+| Motion | `docs/motion.md` |
+| Process | `docs/design-process.md` |
+| Testing | `docs/testing.md` |
 
 ## Quick Start
 
-1. Copy or adapt `assets/tokens.css`; define light/dark semantic tokens (`docs/design-system.md`).
-2. Confirm breakpoints in `docs/layout.md` (trim if the product is mobile-only — document it).
-3. Build components as explicit state machines (`docs/components.md`).
-4. Verify WCAG 2.2 AA with `docs/accessibility.md` + `axe-core`.
-5. Add motion per `docs/motion.md` with reduced-motion fallbacks.
-6. Iterate with `docs/design-process.md` (prototype → system → production).
+1. Copy `assets/tokens.css` (or mirror Flutter `AppThemeData` / web `generateThemeTokens`).
+2. Pick shell: desktop sidebar, mobile bottom nav, or topbar tool layout (`docs/layout.md`).
+3. Build flat bordered components (`docs/components.md`).
+4. Verify WCAG 2.2 AA (`docs/accessibility.md` + axe-core).
+5. Use 300ms default motion with reduced-motion fallbacks.
 
-## Guardrails
+## Defaults
 
-**Always:** no a11y bypass; no layout shift on load; motion optional; tokens only (no magic values).
-
-**Defaults (declarable):** breakpoint set including ≥1024px desktop target; in-app theme toggle for multi-page apps.
+- Brand triad: `#6C5CE7` / `#A29BFE` / `#00B894` (override per product).
+- Space 8/16/24/32 · radius 8/12/16 · anim 300ms.
+- Light `#F5F6FA`/`#FFFFFF` · dark `#1A1A2E`/`#16213E`.

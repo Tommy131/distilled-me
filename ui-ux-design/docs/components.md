@@ -1,188 +1,125 @@
-# Component Design Patterns
+# Component patterns — OwO
 
-> Explicit state machines, accessible by default, responsive from the start, theme via tokens only.
+> Flat bordered surfaces, primary triad, explicit states. Align with Flutter themes and Flight web CSS modules.
 
-## State machine pattern
+## State machines
 
-Every interactive component has explicit states and transitions — no ad hoc boolean soup without a model.
+Interactive controls expose explicit states (`idle` / `loading` / `disabled` / `success` / `error`). Every user-visible state needs an accurate accessible name.
 
-```ts
-type ButtonState = "idle" | "loading" | "disabled" | "success" | "error";
+## Surface card
 
-const buttonCopy: Record<ButtonState, { label: string; accessibleLabel: string; disabled: boolean }> = {
-  idle: { label: "Submit", accessibleLabel: "Submit form", disabled: false },
-  loading: { label: "Submitting…", accessibleLabel: "Submitting form, please wait", disabled: true },
-  disabled: { label: "Submit", accessibleLabel: "Submit form, disabled", disabled: true },
-  success: { label: "Submitted", accessibleLabel: "Form submitted successfully", disabled: true },
-  error: { label: "Retry", accessibleLabel: "Retry submitting form", disabled: false },
-};
-```
-
-Every state that users perceive SHOULD expose an accurate accessible name (visible text and/or `aria-label`).
-
-## Design principles
-
-1. **Responsive from day one** — usable at the project’s minimum width (default 320px).
-2. **Accessible by default** — focus styles, keyboard, names/roles.
-3. **Theme-agnostic** — semantic tokens only (`var(--color-…)`), never raw `#14479F` in components.
-4. **Consistent interaction** — same action → same pattern app-wide.
-5. **Loading / empty / error** — data views define all three; no blank failures.
-
-## Form inputs
-
-| State | Behavior |
-|-------|----------|
-| Default | Border `--color-border-default`, label `--color-text-secondary` |
-| Focused | Focus ring / border `--color-focus-ring`, label `--color-text-primary` |
-| Invalid | Border `--color-text-destructive` (or dedicated destructive border token), error text linked via `aria-describedby` |
-| Disabled | Muted surface/text; not in tab order if truly inert (`disabled`) |
-| Read-only | Focusable when users need to read/copy; not editable |
-| Required | Visible indicator + `aria-required="true"` or native `required` |
+OwO default card = **no elevation** + border + medium radius:
 
 ```css
-.input {
-  border: 1px solid var(--color-border-default);
+.card {
+  background: var(--color-surface);
   color: var(--color-text-primary);
-  background: var(--color-bg-surface);
-  border-radius: var(--radius-sm);
-  padding: var(--space-3) var(--space-4);
-  transition: border-color var(--duration-normal) var(--easing-standard);
-}
-
-.input:focus-visible {
-  outline: none;
-  border-color: var(--color-focus-ring);
-  box-shadow:
-    0 0 0 2px var(--color-bg-surface),
-    0 0 0 4px var(--color-focus-ring-outer);
-}
-
-.input[aria-invalid="true"] {
-  border-color: var(--color-text-destructive);
-}
-
-.input:disabled {
-  background: var(--color-bg-elevation-1);
-  color: var(--color-text-tertiary);
-  cursor: not-allowed;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: none; /* optional: var(--shadow-card) for hero only */
 }
 ```
+
+**Hero / welcome card:** primary→secondary gradient, `--radius-lg`, soft primary-tinted shadow.
+
+**Icon well:** `--color-primary-a10` fill, `--radius-sm`, icon ~24px.
+
+**List group:** bordered container + separators using `--color-border` (1px `Divider`).
 
 ## Buttons
 
-Variants: primary / secondary / destructive / tertiary.
+| Variant | Recipe |
+|---------|--------|
+| Primary / elevated | `--color-primary` fill, `--color-on-primary` text, pad 24×12, `--radius-sm`, elevation 0 |
+| Outlined | surface fill, primary text, secondary stroke ~1.8px, **`--radius-lg`** |
+| Ghost / tertiary | transparent + border `--color-border`; hover border→primary |
+| Destructive | danger text/border or danger fill; confirm before irreversible actions |
+| Loading | `aria-busy="true"`, disabled pointer, spinner; keep accessible name |
 
 ```css
 .button--primary {
-  background: var(--color-bg-primary);
-  color: var(--color-text-on-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   border: none;
-  padding: var(--space-3) var(--space-4);
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-label);
-  font-weight: var(--font-weight-semibold);
+  padding: 12px 24px;
   border-radius: var(--radius-sm);
-  transition:
-    background-color var(--duration-normal) var(--easing-standard),
+  font-weight: var(--font-weight-semibold);
+  transition: background-color var(--anim-duration) var(--easing-standard),
     transform var(--duration-fast) var(--easing-standard);
 }
-
-.button--primary:hover {
-  background: var(--color-bg-primary-hover);
-}
-
 .button--primary:active {
-  transform: translateY(1px);
-}
-
-.button--primary:disabled {
-  background: var(--color-bg-elevation-1);
-  color: var(--color-text-tertiary);
-  cursor: not-allowed;
-  transform: none;
-}
-
-.button--loading {
-  position: relative;
-  color: transparent;
-  pointer-events: none;
-}
-
-.button--loading::after {
-  content: "";
-  position: absolute;
-  inset: 50% auto auto 50%;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
-  border: 2px solid rgb(255 255 255 / 0.3);
-  border-top-color: var(--color-text-on-primary);
-  border-radius: 50%;
-  animation: spin var(--duration-deliberate) linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button--primary {
-    transition: none;
-  }
-  .button--loading::after {
-    animation: none;
-    border-color: var(--color-text-on-primary);
-  }
+  transform: scale(0.98);
 }
 ```
 
-Loading buttons: keep an accessible name that reflects busy state (`aria-busy="true"` and updated label).
+## Form inputs
 
-## Data lists / tables
+| State | Tokens |
+|-------|--------|
+| Default | border `--color-border`, text primary, surface fill |
+| Focus | focus ring `--color-focus-ring` / outline primary@0.3 |
+| Invalid | border / text `--color-danger`; `aria-invalid` + `aria-describedby` |
+| Disabled | muted text; `disabled` attribute |
 
-| Pattern | When |
-|---------|------|
-| List | Simple single-column data, mobile |
-| Table | Multi-column comparison on wider viewports |
-| Cards | Rich media + actions |
-| Virtualization | Very large lists (thousands of rows) |
-
-On narrow screens: allow horizontal scroll for complex tables **or** stack into definition lists/cards — pick one pattern per product and stay consistent.
-
-## Cards
-
-Structure: optional media → title → description → metadata → actions.
-
-Rules:
-
-1. Use cards for rich content; simple tabular data stays a table/list.
-2. Equalize heights in a grid with flex/grid.
-3. No horizontal scroll inside a card.
-4. Set image `aspect-ratio` so layout does not jump.
+Radius: `--radius-sm` (8). Padding comfortable (~8–12 vertical).
 
 ## Navigation
 
-| Viewport | Pattern | Placement |
-|----------|---------|-----------|
-| &lt; 768px | Bottom bar **or** top bar + drawer | Max ~5 primary destinations |
-| ≥ 768px and &lt; 1024px | Top tabs or collapsible side nav | Keep primary destinations visible |
-| ≥ 1024px | Sidebar (≈240px) or persistent top nav | Active state always visible |
+### Desktop sidebar
 
-**Hamburger / drawer:** use on small viewports when primary links do not fit. Do **not** require hamburger on desktop if a sidebar/top nav already shows the same destinations.
+- Width 200 / 60; selected = primary + `--color-primary-a10` well
+- Semantics / `aria-label` on nav region
+- Collapse control in header
 
-Principles:
+### Mobile bottom nav
 
-1. Prefer ≤5 top-level items; group the rest.
-2. Clear active state.
-3. Limit nesting; use breadcrumbs for deeper hierarchy.
-4. Full keyboard support (Tab into nav; arrows inside composite widgets per APG).
+- ≤5 slots; selected primary + scale; unselected secondary text
+- “More” overflow sheet/menu for extra modules
 
-## Documentation per component
+### Topbar (Exam / Studio)
 
-Document: purpose, states/transitions, props, events, a11y requirements, responsive behavior, token usage, code examples, related components. Workflow: `docs/design-process.md`.
+- Text links; `.active` uses elevated surface
+- Sticky; wrap on narrow containers
 
-## Testing
+## Feedback
 
-Visual baselines + `axe-core` for each composite widget. See `docs/testing.md`.
+| Kind | Color |
+|------|-------|
+| Success | `--color-success` (`#00B894`) |
+| Warning | `--color-warning` |
+| Error | `--color-danger` / error |
+| Info | `--color-primary` |
+
+Snackbars / toasts: short, actionable; don’t rely on color alone.
+
+## Status chips (domain)
+
+Prefer shared status tokens (BahnKlar delay model):
+
+| Status | Token |
+|--------|-------|
+| OK / on-time | `--color-status-ok` |
+| Caution / minor | `--color-status-caution` |
+| Critical / major | `--color-status-critical` |
+| Neutral | `--color-status-neutral` |
+
+Chip outline: primary@0.4 light / 0.5 dark (BahnKlar `chipTheme` lesson — avoid near-black M3 defaults).
+
+## Data views — three states
+
+Every list/detail MUST design **loading / empty / error** (skeleton or progress; empty CTA; retry). Match software-engineering UI 三态基线.
+
+## Tables / lists
+
+- Mobile: stacked cards or horizontal scroll for wide tables — pick one per product
+- Virtualize very large lists
+- Mono + tabular nums for telemetry (`.text-mono`)
+
+## Dialogs
+
+Focus trap, Escape closes, restore focus, `aria-modal="true"`. Flight web often uses SweetAlert2 — still must meet focus/label rules.
+
+## Documentation checklist
+
+Props, states, a11y, responsive behavior, token usage, examples. Process: `docs/design-process.md`.

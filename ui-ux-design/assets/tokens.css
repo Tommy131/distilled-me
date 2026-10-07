@@ -1,52 +1,75 @@
 /**
- * Design tokens — copy into the app global stylesheet or CSS module entry.
- * Components consume semantic tokens only; primitives stay in :root theme blocks.
+ * OwO design tokens — distilled from:
+ *   owo_dashboard / owo_flight_assistant / owo-bahnklar (Flutter AppThemeData)
+ *   OwO-FlightAssistant-Middleware/web (generateThemeTokens)
+ *   owo-ai-studio, exam-trainer, owo-win-deploy (product accent variants)
+ *
+ * Default brand = Flight / Dashboard purple triad.
+ * Override with [data-product="studio"|"exam"|"win-deploy"] or set --color-primary in app code.
+ * Components MUST consume semantic tokens only.
  */
 
 :root {
-  /* —— Primitive palette (light defaults; dark overrides below) —— */
-  --palette-primary-800: #0f3a7a;
-  --palette-primary-900: #14479f;
-  --palette-primary-100: #426495;
+  /* —— Brand triad (default: 默认紫) —— */
+  --color-primary: #6c5ce7;
+  --color-secondary: #a29bfe;
+  --color-accent: #00b894;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
 
-  --palette-neutral-10: #f7f7f7;
-  --palette-neutral-50: #ffffff;
-  --palette-neutral-100: #ffffff;
-  --palette-neutral-400: #c6c6c6;
-  --palette-neutral-500: #8a8a8a;
-  --palette-neutral-600: #6b6b6b;
-  --palette-neutral-700: #4a4a4a;
-  --palette-neutral-800: #2e2e2e;
-  --palette-neutral-900: #1d1d1d;
+  /* —— Surfaces (light) —— */
+  --color-background: #f5f6fa;
+  --color-surface: #ffffff;
+  --color-surface-container-highest: #f5f5f5;
+  --color-nav: #fbfbf9;
 
-  --palette-destructive-800: #5a0a0a;
-  --palette-destructive-900: #6d0707;
-  --palette-success-900: #0d5c2e;
+  /* —— Text / border (light) —— */
+  --color-text-primary: #2d3436;
+  --color-text-secondary: #636e72;
+  --color-text-tertiary: #9a9a93;
+  --color-border: #dfe6e9;
+  --color-border-strong: #d6d6d0;
+  --color-outline: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  --color-focus-ring: var(--color-primary);
+  --color-focus-ring-outer: color-mix(in srgb, var(--color-primary) 35%, transparent);
 
-  /* —— Semantic color —— */
-  --color-text-primary: var(--palette-neutral-900);
-  --color-text-secondary: var(--palette-neutral-700);
-  --color-text-tertiary: var(--palette-neutral-500);
-  --color-text-destructive: var(--palette-destructive-900);
-  --color-text-success: var(--palette-success-900);
-  --color-text-on-primary: #ffffff;
+  /* —— Semantic —— */
+  --color-error: #f44336;
+  --color-on-error: #ffffff;
+  --color-success: #00b894;
+  --color-warning: #ff9800;
+  --color-danger: #e53935;
+  --color-caution: #fdd835;
+  --color-status-ok: #2db87a;
+  --color-status-caution: #f5a623;
+  --color-status-critical: #e53935;
+  --color-status-neutral: #9e9e9e;
 
-  --color-bg-surface: var(--palette-neutral-100);
-  --color-bg-elevation-1: var(--palette-neutral-50);
-  --color-bg-elevation-2: var(--palette-neutral-10);
-  --color-bg-overlay: rgb(29 29 29 / 0.56);
-  --color-bg-primary: var(--palette-primary-900);
-  --color-bg-primary-hover: var(--palette-primary-800);
-  --color-bg-destructive: var(--palette-destructive-900);
+  /* —— Alpha helpers —— */
+  --color-primary-a10: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  --color-primary-a20: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --color-primary-a30: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  --color-on-surface-a04: rgb(0 0 0 / 0.04);
+  --color-on-surface-a08: rgb(0 0 0 / 0.08);
+  --color-on-surface-a40: rgb(0 0 0 / 0.4);
+  --color-on-surface-a60: rgb(0 0 0 / 0.6);
 
-  --color-border-subtle: var(--palette-neutral-400);
-  --color-border-default: var(--palette-neutral-600);
-  --color-border-strong: var(--palette-neutral-800);
+  /* —— Aliases used by older skill docs —— */
+  --color-bg-surface: var(--color-surface);
+  --color-bg-elevation-1: var(--color-surface);
+  --color-bg-elevation-2: var(--color-surface-container-highest);
+  --color-bg-primary: var(--color-primary);
+  --color-bg-primary-hover: color-mix(in srgb, var(--color-primary) 88%, #000);
+  --color-border-subtle: var(--color-border);
+  --color-border-default: var(--color-border);
+  --color-text-destructive: var(--color-danger);
 
-  --color-focus-ring: var(--palette-primary-900);
-  --color-focus-ring-outer: rgb(20 71 159 / 0.35);
-
-  /* —— Spacing (4px grid; space-1 is a 2px hairline exception) —— */
+  /* —— Spacing (OwO 8-pt grid; xs used ad hoc) —— */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
   --space-0: 0;
   --space-1: 2px;
   --space-2: 4px;
@@ -59,14 +82,31 @@
   --space-9: 48px;
   --space-10: 64px;
 
-  /* —— Typography —— */
-  --font-family-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* —— Radius —— */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
 
-  --font-size-display: 2.25rem;   /* 36px mobile floor; scale up in layout */
-  --font-size-heading: 1.5rem;    /* 24px */
-  --font-size-body: 1rem;         /* 16px */
-  --font-size-label: 0.875rem;    /* 14px */
-  --font-size-caption: 0.75rem;   /* 12px */
+  /* —— Typography —— */
+  --font-family-sans: "Noto Sans SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system,
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-title: "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  --font-family-mono: "JetBrains Mono", "Cascadia Code", "Cascadia Mono", "SF Mono", Consolas,
+    ui-monospace, monospace;
+
+  --font-size-display-lg: 32px;
+  --font-size-display-md: 28px;
+  --font-size-display-sm: 24px;
+  --font-size-headline: 20px;
+  --font-size-title: 14px;
+  --font-size-body-lg: 16px;
+  --font-size-body: 14px;
+  --font-size-label: 12px;
+  --font-size-caption: 11px;
+
+  --font-size-display: var(--font-size-display-md);
+  --font-size-heading: var(--font-size-headline);
 
   --line-height-display: 1.2;
   --line-height-heading: 1.3;
@@ -78,76 +118,126 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /* —— Layout chrome —— */
+  --sidebar-expanded: 200px;
+  --sidebar-collapsed: 60px;
+  --header-height: 56px;
+  --desktop-min-content-width: 1000px;
+  --content-max: 1100px;
+  --bp-mobile-max: 649px;
+  --bp-tablet-min: 650px;
+  --bp-tablet-max: 1241px;
+  --bp-desktop-min: 1242px;
+
   /* —— Motion —— */
-  --duration-fast: 120ms;
-  --duration-normal: 200ms;
+  --duration-fast: 150ms;
+  --duration-normal: 220ms;
   --duration-slow: 300ms;
   --duration-deliberate: 450ms;
+  --anim-duration: 300ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --easing-entrance: cubic-bezier(0, 0, 0.2, 1);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
 
-  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
-  --easing-emphasized: cubic-bezier(0.3, 0, 0, 1);
-  --easing-entrance: cubic-bezier(0, 0, 0, 1);
-  --easing-exit: cubic-bezier(0.3, 0, 1, 1);
-
-  /* —— Radius / elevation —— */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-elevation-1: 0 1px 2px rgb(0 0 0 / 0.08);
-  --shadow-elevation-2: 0 4px 12px rgb(0 0 0 / 0.12);
+  /* —— Elevation (prefer border; shadows for chrome/hero) —— */
+  --shadow-sm: 0 1px 4px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.12);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.16);
+  --shadow-chrome: 0 -2px 10px rgb(0 0 0 / 0.05);
+  --shadow-card: 0 4px 10px rgb(0 0 0 / 0.05);
 
   color-scheme: light;
 }
 
+/* Dark — Flight / Dashboard navy night (default dual-theme) */
 :root[data-theme="dark"],
-[data-theme="dark"] {
-  --palette-neutral-10: #2a2a2a;
-  --palette-neutral-50: #4b4b4b;
-  --palette-neutral-100: #383838;
-  --palette-neutral-400: #6b6b6b;
-  --palette-neutral-500: #9a9a9a;
-  --palette-neutral-600: #b0b0b0;
-  --palette-neutral-700: #c8c8c8;
-  --palette-neutral-800: #e0e0e0;
-  --palette-neutral-900: #f2f2f2;
+:root[data-brightness="dark"],
+[data-theme="dark"],
+[data-brightness="dark"] {
+  --color-background: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-container-highest: #2c2c2c;
+  --color-nav: #232323;
 
-  --palette-primary-900: #6b8fc9;
-  --palette-primary-800: #426495;
-  --palette-destructive-900: #e07070;
-  --palette-success-900: #5dcaa0;
+  --color-text-primary: #dfe6e9;
+  --color-text-secondary: #b2bec3;
+  --color-text-tertiary: #7a7a74;
+  --color-border: #2d3436;
+  --color-border-strong: #4a4a47;
+  --color-outline: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  --color-error: #ff5252;
 
-  --color-text-primary: var(--palette-neutral-900);
-  --color-text-secondary: var(--palette-neutral-700);
-  --color-text-tertiary: var(--palette-neutral-500);
-  --color-text-on-primary: #0f172a;
+  --color-on-surface-a04: rgb(255 255 255 / 0.04);
+  --color-on-surface-a08: rgb(255 255 255 / 0.08);
+  --color-on-surface-a40: rgb(255 255 255 / 0.4);
+  --color-on-surface-a60: rgb(255 255 255 / 0.6);
 
-  --color-bg-surface: #1a1a1a;
-  --color-bg-elevation-1: var(--palette-neutral-100);
-  --color-bg-elevation-2: var(--palette-neutral-10);
-  --color-bg-overlay: rgb(0 0 0 / 0.64);
-  --color-bg-primary: var(--palette-primary-800);
-  --color-bg-primary-hover: var(--palette-primary-900);
-
-  --color-border-subtle: var(--palette-neutral-400);
-  --color-border-default: var(--palette-neutral-500);
-  --color-border-strong: var(--palette-neutral-700);
-
-  --color-focus-ring: var(--palette-primary-900);
-  --color-focus-ring-outer: rgb(107 143 201 / 0.45);
-
-  --shadow-elevation-1: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-elevation-2: 0 4px 12px rgb(0 0 0 / 0.5);
+  --shadow-sm: 0 1px 4px rgb(0 0 0 / 0.45);
+  --shadow-md: 0 4px 16px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 0.6);
+  --shadow-chrome: 0 -2px 10px rgb(0 0 0 / 0.35);
+  --shadow-card: 0 4px 10px rgb(0 0 0 / 0.35);
 
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme="light"]):not([data-brightness="light"]) {
     color-scheme: dark;
   }
 }
 
-/* Focus ring utility — prefer :focus-visible in components */
+/* Product accent overrides (optional) */
+[data-product="studio"] {
+  --color-primary: #14b8a6;
+  --color-secondary: #5eead4;
+  --color-accent: #5eead4;
+  --color-on-primary: #04201c;
+  --color-background: #0f1115;
+  --color-surface: #171a21;
+  --color-surface-container-highest: #1f232c;
+  --color-border: #2a2f3a;
+  --color-text-primary: #e6e8ec;
+  --color-text-secondary: #98a0ad;
+  --radius-md: 10px;
+  color-scheme: dark;
+}
+
+[data-product="exam"] {
+  --color-primary: #5b8cff;
+  --color-secondary: #2a3358;
+  --color-accent: #5b8cff;
+  --color-on-primary: #08101f;
+  --color-background: #0f1420;
+  --color-surface: #171d2e;
+  --color-surface-container-highest: #1f2740;
+  --color-border: #2b344e;
+  --color-text-primary: #e7ecf5;
+  --color-text-secondary: #9aa6c0;
+  --color-success: #3ec98a;
+  --color-warning: #f0b429;
+  --color-danger: #f1657a;
+  color-scheme: dark;
+}
+
+[data-product="win-deploy"] {
+  --color-primary: #185fa5;
+  --color-secondary: #5ba3e8;
+  --color-accent: #185fa5;
+  --color-background: #f5f5f2;
+  --color-surface: #ffffff;
+  --color-nav: #fbfbf9;
+  --color-border: #e6e6e1;
+  --color-border-strong: #d6d6d0;
+  --color-text-primary: #1b1b1a;
+  --color-text-secondary: #6e6e69;
+  --color-success: #3b6d11;
+  --color-danger: #a32d2d;
+  --color-warning: #9a5b00;
+  --radius-md: 10px;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
