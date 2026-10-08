@@ -1,103 +1,78 @@
 ---
 name: ui-ux-design
 description: >
-  Design, implement, and review UI/UX with the OwO token-driven design system (Flutter
-  AppThemeData / Flight web CSS vars), WCAG 2.2 AA, responsive shells (sidebar 200/60,
-  mobile bottom nav), and motion-on-purpose. Use when designing components or screens,
-  writing CSS/Tailwind/Flutter themes, establishing a design system, reviewing a11y or
-  theming, or working on OwO apps (dashboard, flight assistant, bahnklar, middleware web,
-  ai-studio, exam-trainer, win-deploy). Prefer this for systemized UI/a11y; use a general
-  frontend-design skill for one-off visual styling without design-system workflow.
+  Design, implement, and review OwO UI with token-driven Flutter, React, and WPF
+  systems, responsive shells, WCAG 2.2 AA, and purposeful motion. Use for visual
+  redesigns, component/layout/theme work, accessibility reviews, and existing OwO
+  Recorder Signal pages; preserve current behavior unless the user explicitly changes it.
+metadata:
+  short-description: Design and review OwO interfaces safely
 ---
 
-# OwO Design System & UX Specification
+# OwO UI/UX design
 
-Token-driven UI distilled from OwO products (Flutter shells + Flight web port + Studio/Exam/WinDeploy variants). WCAG 2.2 AA, flat bordered surfaces, primary triad theming, sidebar/bottom-nav shells.
+Use this skill to turn an interface brief or an existing OwO screen into a coherent, accessible, responsive product surface. The default system comes from the OwO Flutter `AppThemeData` and Flight web tokens. For the existing OwO Recorder web app, load [recorder-signal-patterns.md](docs/recorder-signal-patterns.md) when the task touches its Signal visual language, user quota pages, or administration screens.
 
-**Never apply component changes ad hoc.** Follow `docs/design-process.md` unless the user asks for a quick one-off tweak. Provenance: `docs/owo-sources.md`.
+## Non-negotiable product contract
 
-## Workflow Overview
+1. **Preserve behavior by default.** A visual redesign keeps routes, API calls, request bodies, permissions, business rules, submit timing, content order, and existing workflows intact. Inspect handlers and tests before changing markup. If a behavior change is requested, isolate and state it.
+2. **Use semantic tokens.** Feature code consumes the project's existing color, spacing, radius, type, shadow, and motion variables. Never introduce a raw color or ad-hoc spacing value in a component when a token exists. When an app has a local token namespace, map the design to it instead of forcing the generic OwO names.
+3. **Make states first-class.** Loading, empty, error, success, disabled, partial, and long-content states need an intentional layout and an accurate accessible announcement. Do not invent metrics, fake records, or synthetic operational status to fill empty space.
+4. **Avoid duplicate communication.** If several records produce the same user-facing warning, deduplicate it at the presentation boundary. Keep distinct guidance, merge action lists in stable order, and show one heading for the group. Do not hide a genuinely different issue merely because it appears in the same panel.
 
-| Phase | Load |
-|-------|------|
-| OwO tokens & theming | `docs/design-system.md` + `assets/tokens.css` |
-| Layout shells & breakpoints | `docs/layout.md` |
+## Default design direction
+
+- Use whitespace and a responsive grid to make information scannable. Bento groupings are appropriate for independent metrics or actions; do not turn every row into a decorative card.
+- Prefer flat bordered surfaces with restrained shadows. Use 16px, 24px, or 32px radii deliberately by hierarchy; keep controls smaller than primary panels.
+- Use a strong display/title weight against a quiet readable body weight. Use a mono face for IDs, timestamps, quantities, scores, and other data where alignment matters.
+- Keep one accent for the primary action and status emphasis. Semantic success, warning, and danger colors must remain distinct and readable in both themes.
+- Use gradients, blur, and glow only when they explain grouping or hierarchy. Dark mode uses a deep tinted surface rather than pure black.
+
+## Workflow
+
+### 1. Reconnaissance
+
+Identify the route, shell, component entry point, existing tokens, data contract, interaction handlers, tests, and current responsive rules. Read only the relevant references below. Write down the single job of the page and the information that must remain in its original order.
+
+### 2. Plan before styling
+
+Create a small layout model: page header, primary action, summary or filters, main content, and state surfaces. Choose a desktop and mobile arrangement before editing CSS. Decide which information is a metric, a filter, a record, a status, or an irreversible action; the semantic category should determine the component shape.
+
+### 3. Implement in layers
+
+1. Apply tokens and page geometry.
+2. Establish hierarchy and responsive reflow.
+3. Style component states and interaction feedback.
+4. Add only the minimum markup needed for accessible names, regions, status messages, and focus behavior.
+5. Keep page-specific rules scoped. Shared CSS changes must be justified by more than one consumer.
+
+### 4. Validate behavior and presentation
+
+Run the smallest meaningful unit tests first, then the project's build and lint checks. Use Playwright or the available browser harness for changed routes. Check light/dark themes, Chinese/English when localization exists, 320/390/768/1024/1440px or the product's agreed widths, no document-level horizontal overflow, and axe WCAG 2/2.1/2.2 AA checks. Exercise at least one success, failure, empty, loading, long-content, and destructive-confirmation path when those states exist.
+
+Do not claim that a complete test suite passed when it is known to be incomplete, OOM-prone, or blocked by pre-existing failures. Report the exact targeted checks and their limits.
+
+## System defaults
+
+The canonical OwO defaults remain in [design-system.md](docs/design-system.md), [layout.md](docs/layout.md), [components.md](docs/components.md), and [assets/tokens.css](assets/tokens.css):
+
+- 8pt spacing; common 8/12/16px radius; 300ms motion with reduced-motion fallback.
+- Light/dark/system themes with semantic surface, text, border, focus, and status tokens.
+- Desktop sidebar 200px/60px collapsed, mobile shell below 650px, and a 56px app bar unless a product-specific shell says otherwise.
+- Native controls and table semantics where appropriate; visible `:focus-visible`; one logical `h1`; status updates via `role="status"` or `role="alert"`.
+- Modal focus moves inside, stays contained, closes with Escape when safe, and returns to the trigger.
+
+## Reference routing
+
+| Need | Read |
+| --- | --- |
+| OwO tokens, themes, and product provenance | `docs/design-system.md`, `assets/tokens.css`, `docs/owo-sources.md` |
+| Shell and breakpoint decisions | `docs/layout.md` |
 | Component recipes | `docs/components.md` |
-| Accessibility (WCAG 2.2 AA) | `docs/accessibility.md` |
+| WCAG, semantics, and focus | `docs/accessibility.md` |
 | Motion | `docs/motion.md` |
-| Design process | `docs/design-process.md` |
-| Testing & QA | `docs/testing.md` |
-| Source map | `docs/owo-sources.md` |
+| Design process and decision records | `docs/design-process.md` |
+| Test and browser QA patterns | `docs/testing.md` |
+| OwO Recorder Signal visual language, admin patterns, state deduplication, and validation matrix | `docs/recorder-signal-patterns.md` |
 
-Load only what the task needs.
-
-## Guardrails
-
-### Always
-
-1. **No accessibility bypass** — visible `:focus-visible`, logical tab order, correct names/roles; zero critical `axe-core` issues on changed UI.
-2. **No layout shift on load** — reserve space before late content.
-3. **Motion optional** — `prefers-reduced-motion` fallbacks; motion must not break focus or SR announcements.
-4. **Tokens only** — no raw hex/spacing/type in components; use `assets/tokens.css` or Flutter `AppThemeData` helpers.
-
-### OwO defaults (trim only if documented)
-
-5. **Shell breakpoints** — mobile `<650`, desktop `≥1242`; desktop min content ~1000px; sidebar 200/60.
-6. **Theme** — system/light/dark + primary triad presets for shell apps; dark-only tools (Studio/Exam) set `[data-product]` and document it.
-7. **Surfaces** — flat cards (elevation 0 + 1px border + radius 12).
-
-## Quick Reference: OwO tokens
-
-```css
-/* Brand triad (默认紫) */
---color-primary: #6C5CE7;
---color-secondary: #A29BFE;
---color-accent: #00B894;
-
-/* Surfaces light → dark */
---color-background: #F5F6FA; /* dark #1A1A2E */
---color-surface: #FFFFFF;    /* dark #16213E */
---color-text-primary / --color-text-secondary
---color-border
-
-/* Space / radius / motion */
---space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px;
---radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px;
---anim-duration: 300ms;
-
-/* Chrome */
---sidebar-expanded: 200px; --sidebar-collapsed: 60px;
---bp-mobile-max: 649px; --bp-desktop-min: 1242px;
-```
-
-Product accents: `[data-product="studio"|"exam"|"win-deploy"]`. Full file: `assets/tokens.css`.
-
-## Quick Reference: Type
-
-| Role | Size | Notes |
-|------|------|-------|
-| Display | 32 / 28 / 24 | Noto Sans SC, bold/semibold |
-| Headline / AppBar | 20 | Often Microsoft YaHei |
-| Body | 16 / 14 | Default UI 14, lh 1.5 |
-| Label / caption | 12 / 11 | |
-| Mono | JetBrains / Cascadia | Telemetry & code |
-
-## Quick Reference: WCAG 2.2 AA
-
-Keyboard operable · focus visible · order matches reading · name/role/value · contrast 4.5:1 text · images `alt` · one `h1` · `lang` · target size · status messages. Details: `docs/accessibility.md`.
-
-## Quick Reference: Shells
-
-| Viewport | Pattern |
-|----------|---------|
-| Mobile | AppBar + content + bottom nav (≤5) + optional drawer |
-| Desktop | Collapsible sidebar 200/60 + AppBar + content |
-| Tools | Sticky topbar + max-width content (Exam/Studio) |
-
-## Additional Resources
-
-- [owo-sources.md](docs/owo-sources.md) — distillation sources & presets
-- [design-system.md](docs/design-system.md) — token architecture
-- [assets/tokens.css](assets/tokens.css) — copy-ready CSS
-- [layout.md](docs/layout.md) · [components.md](docs/components.md) · [motion.md](docs/motion.md)
-- [accessibility.md](docs/accessibility.md) · [design-process.md](docs/design-process.md) · [testing.md](docs/testing.md)
+Load only the references that materially affect the current request. The Recorder reference is an implementation overlay, not a replacement for canonical OwO tokens or for product-specific requirements.

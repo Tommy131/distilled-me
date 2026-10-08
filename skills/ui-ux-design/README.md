@@ -19,6 +19,7 @@ Invoke via `/ui-ux-design` or ask for OwO theming / design-system / a11y work. L
 | Motion | `docs/motion.md` |
 | Process | `docs/design-process.md` |
 | Testing | `docs/testing.md` |
+| OwO Recorder Signal patterns | `docs/recorder-signal-patterns.md` |
 
 ## Quick Start
 
@@ -27,6 +28,7 @@ Invoke via `/ui-ux-design` or ask for OwO theming / design-system / a11y work. L
 3. Build flat bordered components (`docs/components.md`).
 4. Verify WCAG 2.2 AA (`docs/accessibility.md` + axe-core).
 5. Use 300ms default motion with reduced-motion fallbacks.
+6. When working on OwO Recorder pages, load `docs/recorder-signal-patterns.md` for the Signal visual language, administration layouts, and state-deduplication patterns.
 
 ## Defaults
 
